@@ -7,7 +7,7 @@ working on several features/changes simultaneously.
 A very important factor which contributes greatly to code-quality is a the **consistent** use of (naming) conventions.  
 In order to automatically push *clean code*, I do recommend the use of the git-integration of IntelliJ.  
 When you want to commit something, please check these boxes:  
-![Image](https://imgur.com/JWvvhE4)  
+![Image](https://i.imgur.com/JWvvhE4.png)
 
 ## Reporting a bug
 If you do encounter a bug in the game mechanics (like a squirrel walking through a wall) -  do not hesitate to create an issue and structure the issue like  
