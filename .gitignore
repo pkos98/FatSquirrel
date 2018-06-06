@@ -1,0 +1,7 @@
+# Ignore user-specific intellij files
+**/.idea/workspace.xml
+**/.idea/tasks.xml
+**/.idea/uiDesigner.xml
+
+# Ignore compilation output
+out/
