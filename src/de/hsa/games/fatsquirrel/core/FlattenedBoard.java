@@ -12,6 +12,12 @@ public class FlattenedBoard implements EntityContext, BoardView {
     private Entity[][] cells;
     private MasterSquirrel masterSquirrelCache = null;
 
+    public FlattenedBoard(Board board) {
+        this.board = board;
+        cells = board.getEntities();
+        createEntities();
+    }
+
     @Override
     public EntityType getEntityType(int x, int y) {
         return getEntityType(new XY(x, y));
@@ -57,8 +63,7 @@ public class FlattenedBoard implements EntityContext, BoardView {
         Entity nextEntity = cells[nextPosition.getX()][nextPosition.getY()];
         if (nextEntity instanceof Wall) {
             move(goodBeast, goodBeast.getPosition());
-        }
-        else if (nextEntity instanceof MiniSquirrel ||
+        } else if (nextEntity instanceof MiniSquirrel ||
                 nextEntity instanceof MasterSquirrel) {
             nextEntity.updateEnergy(goodBeast.getEnergy());
             killAndReplace(goodBeast);
@@ -155,8 +160,8 @@ public class FlattenedBoard implements EntityContext, BoardView {
 
     @Override
     public void spawnMiniSquirrel() {
-        // 1. MasterSquirrel finden
-        logger.info("MiniSquirrel spawned");
+        // 1. MASTER_SQUIRREL finden
+        logger.info("MINI_SQUIRREL spawned");
         MasterSquirrel masterSquirrel = findMasterSquirrel();
         XY randomPos = XYSupport.getRandomEmptyPosition(board.getSize().getX(), board.getSize().getY(), this);
         MiniSquirrel miniSquirrel = new MiniSquirrel(42, randomPos, masterSquirrel);
@@ -210,12 +215,6 @@ public class FlattenedBoard implements EntityContext, BoardView {
                 }
             }
         }
-    }
-
-    public FlattenedBoard(Board board) {
-        this.board = board;
-        cells = board.getEntities();
-        createEntities();
     }
 
     private void createEntities() {
@@ -292,7 +291,7 @@ public class FlattenedBoard implements EntityContext, BoardView {
         int toMoveX, toMoveY;
         if (entity.getPosition().getY() - position.getY() >= 0)
             toMoveY = -1;
-        else if(entity.getPosition().getY() - position.getY() <= 0)
+        else if (entity.getPosition().getY() - position.getY() <= 0)
             toMoveY = 1;
         else
             toMoveY = 0;

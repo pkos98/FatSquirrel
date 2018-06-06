@@ -1,10 +1,11 @@
 package de.hsa.games.fatsquirrel;
 
-import de.hsa.games.fatsquirrel.ui.console.GameCommandType;
 import de.hsa.games.fatsquirrel.core.Board;
 import de.hsa.games.fatsquirrel.core.FlattenedBoard;
-import de.hsa.games.fatsquirrel.entities.*;
 import de.hsa.games.fatsquirrel.entities.Character;
+import de.hsa.games.fatsquirrel.entities.Entity;
+import de.hsa.games.fatsquirrel.entities.HandOperatedMasterSquirrel;
+import de.hsa.games.fatsquirrel.ui.console.GameCommandType;
 
 public class State {
 
@@ -21,7 +22,7 @@ public class State {
                 Entity iterField = board.getEntities()[x][y];
                 if (iterField == null)
                     continue;
-                    // If NOT NULL
+                // If NOT NULL
                 if (iterField instanceof HandOperatedMasterSquirrel) {
                     ((HandOperatedMasterSquirrel) iterField).setInput(input);
                     setInput(null);

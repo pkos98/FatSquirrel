@@ -50,19 +50,19 @@ public class ConsoleUI implements UI {
 
     private String toString(EntityType entity) {
         switch (entity) {
-            case GoodBeast:
+            case GOOD_BEAST:
                 return "GB";
-            case BadBeast:
+            case BAD_BEAST:
                 return "BB";
-            case GoodPlant:
+            case GOOD_PLANT:
                 return "GP";
-            case BadPlant:
+            case BAD_PLANT:
                 return "BP";
-            case Wall:
+            case WALL:
                 return "WA";
-            case MasterSquirrel:
+            case MASTER_SQUIRREL:
                 return "MS";
-            case MiniSquirrel:
+            case MINI_SQUIRREL:
                 return "mS";
             default:
                 return null;

@@ -26,7 +26,7 @@ public class MasterSquirrelBotController implements BotController {
         XY move = botHelper.moveToNearestGoodEntity(view);
         try {
             if (view.getEnergy() < energyToReachForSpawn) {
-                if (!move.equals(new XY(0,0)))
+                if (!move.equals(new XY(0, 0)))
                     view.move(move);
                 else
                     view.move(XYSupport.getRandomMoveVector());
@@ -38,7 +38,7 @@ public class MasterSquirrelBotController implements BotController {
                 }
             }
         } catch (SpawnException e) {
-            logger.warning("Unable to pawn MiniSquirrel (Brain)");
+            logger.warning("Unable to pawn MINI_SQUIRREL (Brain)");
         }
     }
 

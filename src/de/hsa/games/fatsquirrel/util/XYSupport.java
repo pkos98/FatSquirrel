@@ -1,8 +1,8 @@
 package de.hsa.games.fatsquirrel.util;
 
-import de.hsa.games.fatsquirrel.ui.console.GameCommandType;
 import de.hsa.games.fatsquirrel.core.EntityContext;
 import de.hsa.games.fatsquirrel.core.XY;
+import de.hsa.games.fatsquirrel.ui.console.GameCommandType;
 
 import java.util.Random;
 

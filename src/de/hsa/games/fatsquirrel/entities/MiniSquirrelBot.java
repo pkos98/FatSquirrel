@@ -16,11 +16,10 @@ import java.util.Arrays;
 import java.util.logging.Logger;
 
 public class MiniSquirrelBot extends MiniSquirrel {
-    private final static Logger logger = Logger.getLogger("MiniSquirrelBot");
-
+    private final static Logger logger = Logger.getLogger("MINI_SQUIRREL_BOT");
+    private static final int VIEW_DISTANCE = 21;
     private BotControllerFactory botControllerFactory;
     private BotController botController;
-    private static final int VIEW_DISTANCE = 21;
 
     MiniSquirrelBot(int energy, XY position, MasterSquirrel daddy, BotControllerFactory botControllerFactory) {
         super(energy, position, daddy);
@@ -59,7 +58,49 @@ public class MiniSquirrelBot extends MiniSquirrel {
 
     @Override
     public String toString() {
-        return "MiniSquirrelBot{ " + super.toString() + " }";
+        return "MINI_SQUIRREL_BOT{ " + super.toString() + " }";
+    }
+
+    private boolean entityFriendly(Entity entity, Entity entitytoCheck) {
+        if (entitytoCheck == null || entity == null)
+            return true;
+        if (EntityType.fromEntity(entity) == EntityType.MASTER_SQUIRREL_BOT) {
+            MasterSquirrel masterSquirrelOfMiniSquirrel = ((MiniSquirrel) entity).getPatron();
+
+            switch (EntityType.fromEntity(entitytoCheck)) {
+                case MASTER_SQUIRREL:
+                    return masterSquirrelOfMiniSquirrel.equals(entitytoCheck);
+                case MINI_SQUIRREL:
+                    return masterSquirrelOfMiniSquirrel.equals(((MiniSquirrel) entitytoCheck).getPatron());
+                case WALL:
+                default:
+                    return false;
+            }
+        }
+        return true;
+    }
+
+    private int collectedEnergyOfEntity(double energyLoss, Entity entity) {
+        int energyCollected;
+        EntityType entityType = EntityType.fromEntity(entity);
+
+        switch (entityType) {
+            case BAD_BEAST:
+            case BAD_PLANT:
+                entity.updateEnergy((int) energyLoss);
+            case WALL:
+                energyCollected = 0;
+                break;
+            case MASTER_SQUIRREL:
+            case MASTER_SQUIRREL_BOT:
+                energyCollected = (int) energyLoss;
+                entity.updateEnergy(-(int) energyLoss);
+                break;
+            default:
+                energyCollected = (int) energyLoss > entity.getEnergy() ? entity.getEnergy() : (int) energyLoss;
+                entity.updateEnergy(-(int) energyLoss);
+        }
+        return energyCollected;
     }
 
     public class ControllerContextImpl implements ControllerContext {
@@ -131,7 +172,7 @@ public class MiniSquirrelBot extends MiniSquirrel {
 
         @Override
         public void spawnMiniBot(XY direction, int energy) {
-            //kann keine MiniSquirrelBot spawnen
+            //kann keine MINI_SQUIRREL_BOT spawnen
         }
 
         //@Override
@@ -160,18 +201,18 @@ public class MiniSquirrelBot extends MiniSquirrel {
                     EntityType entityType = EntityType.fromEntity(entitytoCheck);
 
                     switch (entityType) {
-                        case Wall:
+                        case WALL:
                             break;
-                        case BadPlant:
-                        case BadBeast:
-                        case GoodBeast:
-                        case GoodPlant:
+                        case BAD_PLANT:
+                        case BAD_BEAST:
+                        case GOOD_BEAST:
+                        case GOOD_PLANT:
                             if (entitytoCheck.getEnergy() == 0) {
                                 context.killAndReplace(entitytoCheck);
                             }
                             break;
-                        case MiniSquirrel:
-                        case MasterSquirrelBot:
+                        case MINI_SQUIRREL:
+                        case MASTER_SQUIRREL_BOT:
                             if (entitytoCheck.getEnergy() == 0) {
                                 context.kill(entitytoCheck);
                             }
@@ -219,22 +260,22 @@ public class MiniSquirrelBot extends MiniSquirrel {
                     int energyLoss = (200 * (MiniSquirrelBot.this.getEnergy() / impactArea) * (1 - distance / impactRadius));
 
                     switch (EntityType.fromEntity(entity)) {
-                        case BadBeast:
-                        case BadPlant:
+                        case BAD_BEAST:
+                        case BAD_PLANT:
                             logger.fine("Imploding on Entity ID: " + entity.getId());
                             entity.updateEnergy(-energyLoss);
                             if (entity.getEnergy() >= 0)
                                 context.killAndReplace(entity);
                             break;
-                        case GoodPlant:
-                        case GoodBeast:
+                        case GOOD_PLANT:
+                        case GOOD_BEAST:
                             logger.fine("Imploding on Entity ID: " + entity.getId());
                             entity.updateEnergy(energyLoss);
                             if (entity.getEnergy() <= 0)
                                 context.killAndReplace(entity);
                             break;
-                        case MiniSquirrelBot:
-                        case MiniSquirrel:
+                        case MINI_SQUIRREL_BOT:
+                        case MINI_SQUIRREL:
                             if (getPatron() == ((MiniSquirrel) entity).getPatron())
                                 continue;
                             logger.fine("Imploding on Entity ID: " + entity.getId());
@@ -242,8 +283,8 @@ public class MiniSquirrelBot extends MiniSquirrel {
                             if (entity.getEnergy() <= 0)
                                 context.killAndReplace(entity);
                             break;
-                        case MasterSquirrel:
-                        case MasterSquirrelBot:
+                        case MASTER_SQUIRREL:
+                        case MASTER_SQUIRREL_BOT:
                             MasterSquirrel masterSquirrel = (MasterSquirrel) entity;
                             if (!(masterSquirrel.isPatronOf(MiniSquirrelBot.this)))
                                 if (entity.getEnergy() < -energyLoss)
@@ -255,7 +296,7 @@ public class MiniSquirrelBot extends MiniSquirrel {
                     totalImplosionEnergy = totalImplosionEnergy - energyLoss;
                     logger.fine("Imploding: Total implosion energy: " + totalImplosionEnergy);
                 }
-           getPatron().updateEnergy(totalImplosionEnergy);
+            getPatron().updateEnergy(totalImplosionEnergy);
         }
 
         @Override
@@ -272,48 +313,6 @@ public class MiniSquirrelBot extends MiniSquirrel {
         public long getRemainingSteps() {
             return 0;
         }
-    }
-
-    private boolean entityFriendly(Entity entity, Entity entitytoCheck) {
-        if (entitytoCheck == null || entity == null)
-            return true;
-        if (EntityType.fromEntity(entity) == EntityType.MasterSquirrelBot) {
-            MasterSquirrel masterSquirrelOfMiniSquirrel = ((MiniSquirrel) entity).getPatron();
-
-            switch (EntityType.fromEntity(entitytoCheck)) {
-                case MasterSquirrel:
-                    return masterSquirrelOfMiniSquirrel.equals(entitytoCheck);
-                case MiniSquirrel:
-                    return masterSquirrelOfMiniSquirrel.equals(((MiniSquirrel) entitytoCheck).getPatron());
-                case Wall:
-                default:
-                    return false;
-            }
-        }
-        return true;
-    }
-
-    private int collectedEnergyOfEntity(double energyLoss, Entity entity) {
-        int energyCollected;
-        EntityType entityType = EntityType.fromEntity(entity);
-
-        switch (entityType) {
-            case BadBeast:
-            case BadPlant:
-                entity.updateEnergy((int) energyLoss);
-            case Wall:
-                energyCollected = 0;
-                break;
-            case MasterSquirrel:
-            case MasterSquirrelBot:
-                energyCollected = (int) energyLoss;
-                entity.updateEnergy(-(int) energyLoss);
-                break;
-            default:
-                energyCollected = (int) energyLoss > entity.getEnergy() ? entity.getEnergy() : (int) energyLoss;
-                entity.updateEnergy(-(int) energyLoss);
-        }
-        return energyCollected;
     }
 
 }

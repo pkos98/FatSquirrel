@@ -7,11 +7,10 @@ import java.util.logging.Logger;
 public abstract class PlayerEntity extends Character {
 
     private static final int START_ENERGY = 0;
-
+    private final int PARALYZED_STEPS = 3;
     private boolean isParalyzed;
     private int paralyzeCounter = 0;
     private Logger logger = Logger.getLogger(getClass().getName());
-    private final int PARALYZED_STEPS = 3;
 
     public PlayerEntity(int id, int startEnergy, XY startPos) {
         super(id, startEnergy, startPos);

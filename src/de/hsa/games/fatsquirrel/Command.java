@@ -15,6 +15,7 @@ public class Command {
     public Object[] getParamValues() {
         return paramValues;
     }
+
     public CommandTypeInfo getCommandType() {
         return commandType;
     }
