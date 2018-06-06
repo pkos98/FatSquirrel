@@ -6,14 +6,6 @@ public class BoardConfig {
     private int wallCount;
     private int numberWalls, numberGoodBeasts, numberGoodPlants, numberBadPlants, numberBadBeasts;
 
-    public XY getSize() {
-        return size;
-    }
-
-    public int getWallCount() {
-        return wallCount;
-    }
-
     public BoardConfig(XY size, int wallCount) {
         this.size = size;
         this.wallCount = wallCount;
@@ -22,6 +14,14 @@ public class BoardConfig {
         numberBadBeasts = 5;
         numberGoodPlants = 5;
         numberGoodBeasts = 5;
+    }
+
+    public XY getSize() {
+        return size;
+    }
+
+    public int getWallCount() {
+        return wallCount;
     }
 
     public int getNumberWalls() {

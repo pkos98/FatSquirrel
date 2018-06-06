@@ -18,9 +18,9 @@ import java.util.logging.Logger;
 public class MasterSquirrelBot extends MasterSquirrel {
 
 
+    private static final int VIEW_DISTANCE = 31;
     private final BotController botController;
     private Logger logger = Logger.getLogger(getClass().getName());
-    private static final int VIEW_DISTANCE = 31;
 
     public MasterSquirrelBot(int id, int startEnergy, XY startPos) {
         super(id, startEnergy, startPos);
@@ -36,7 +36,7 @@ public class MasterSquirrelBot extends MasterSquirrel {
         InvocationHandler handler = new InvocationHandler() {
             @Override
             public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
-                logger.finest("MasterSquirrelBot(ID: " + getId() + ") invoked: " + method.getName() + "(" + Arrays.toString(args) + ")");
+                logger.finest("MASTER_SQUIRREL_BOT(ID: " + getId() + ") invoked: " + method.getName() + "(" + Arrays.toString(args) + ")");
                 return method.invoke(view, args);
             }
         };
@@ -122,7 +122,7 @@ public class MasterSquirrelBot extends MasterSquirrel {
         @Override
         public void spawnMiniBot(XY direction, int energy) {
             if (energy <= getEnergy()) {
-                //MiniSquirrelBot miniSquirrelBot = new MiniSquirrelBot(energy, XYSupport.add(getPosition(),direction), this, botController);
+                //MINI_SQUIRREL_BOT miniSquirrelBot = new MINI_SQUIRREL_BOT(energy, XYSupport.add(getPosition(),direction), this, botController);
                 //context.insertEntity(miniSquirrelBot);
                 updateEnergy(-energy);
             }

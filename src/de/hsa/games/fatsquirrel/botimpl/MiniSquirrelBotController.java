@@ -25,7 +25,7 @@ public class MiniSquirrelBotController implements BotController {
         boolean shouldImplode = implodeCondition(view, impactRadius);
 
         if (shouldImplode) {
-            logger.info("MiniSquirrelBot implode!");
+            logger.info("MINI_SQUIRREL_BOT implode!");
             view.implode(impactRadius);
         }
 
@@ -61,7 +61,7 @@ public class MiniSquirrelBotController implements BotController {
             for (int y = startY; y < stopY; y++) {
                 try {
                     EntityType checkEntity = view.getEntityAt(new XY(x, y));
-                    if (checkEntity == EntityType.GoodBeast|| checkEntity == EntityType.GoodPlant) {
+                    if (checkEntity == EntityType.GOOD_BEAST || checkEntity == EntityType.GOOD_PLANT) {
                         counterToImplode++;
                     }
                 } catch (OutOfViewException e) {

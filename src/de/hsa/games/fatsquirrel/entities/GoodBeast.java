@@ -22,8 +22,7 @@ public class GoodBeast extends Character {
         if (nextStepCounter % 4 != 0) {
             nextStepCounter++;
             return getPosition();
-        }
-        else {
+        } else {
             nextStepCounter++;
             context.tryMove(this, botApi(this, context));
             return botApi(this, context);

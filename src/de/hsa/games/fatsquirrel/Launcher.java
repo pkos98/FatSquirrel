@@ -1,10 +1,10 @@
 package de.hsa.games.fatsquirrel;
 
-import de.hsa.games.fatsquirrel.ui.console.ConsoleUI;
-import de.hsa.games.fatsquirrel.ui.console.GameImpl;
 import de.hsa.games.fatsquirrel.core.Board;
 import de.hsa.games.fatsquirrel.core.BoardConfig;
 import de.hsa.games.fatsquirrel.core.XY;
+import de.hsa.games.fatsquirrel.ui.console.ConsoleUI;
+import de.hsa.games.fatsquirrel.ui.console.GameImpl;
 import de.hsa.games.fatsquirrel.ui.fxui.FxUI;
 import javafx.application.Application;
 import javafx.stage.Stage;
@@ -44,6 +44,14 @@ public class Launcher extends Application {
         }, 100, intervall);
     }
 
+    private static boolean containsArgument(String[] args, String arg) {
+        for (int i = 0; i < args.length; i++) {
+            if (args[i].equals(arg))
+                return true;
+        }
+        return false;
+    }
+
     @Override
     public void start(Stage primaryStage) throws Exception {
         FxUI fxUI = FxUI.createInstance(BOARD_SIZE);
@@ -53,14 +61,6 @@ public class Launcher extends Application {
         primaryStage.show();
         Game game = new GameImpl(new State(new Board(new BoardConfig(BOARD_SIZE, WALL_COUNT))), fxUI);
         startGameMultiThreaded(game);
-    }
-
-    private static boolean containsArgument(String[] args, String arg) {
-        for (int i = 0; i < args.length; i++) {
-            if (args[i].equals(arg))
-                return true;
-        }
-        return false;
     }
 
 }

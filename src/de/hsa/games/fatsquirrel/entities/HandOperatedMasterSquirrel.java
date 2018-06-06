@@ -1,28 +1,29 @@
 package de.hsa.games.fatsquirrel.entities;
 
-import de.hsa.games.fatsquirrel.ui.console.GameCommandType;
 import de.hsa.games.fatsquirrel.core.EntityContext;
 import de.hsa.games.fatsquirrel.core.XY;
+import de.hsa.games.fatsquirrel.ui.console.GameCommandType;
 import de.hsa.games.fatsquirrel.util.XYSupport;
 
 public class HandOperatedMasterSquirrel extends MasterSquirrel {
 
     private GameCommandType input;
-	public HandOperatedMasterSquirrel(int id, int startEnergy,XY startPos) {
-		super(id, startEnergy, startPos);
-	}
-	
-	@Override
-	public String toString() {
-	    return "HandOperatedMasterSquirrel";
-	}
 
-    public void setInput(GameCommandType input) {
-        this.input = input;
+    public HandOperatedMasterSquirrel(int id, int startEnergy, XY startPos) {
+        super(id, startEnergy, startPos);
+    }
+
+    @Override
+    public String toString() {
+        return "HandOperatedMasterSquirrel";
     }
 
     public GameCommandType getInput() {
         return input;
+    }
+
+    public void setInput(GameCommandType input) {
+        this.input = input;
     }
 
     @Override

@@ -14,15 +14,15 @@ public class BotHelper {
 
     public static XY moveToNearestGoodEntity(ControllerContext context) {
         XY moveDirection = XY.ZERO_ZERO;
-        XY nearestMasterBot = nearestEntity(context, EntityType.MasterSquirrelBot);
-        XY nearestMaster = nearestEntity(context, EntityType.MasterSquirrel);
-        XY nearestMini = (nearestEntity(context, EntityType.MiniSquirrel));
-        XY nearestMiniBot = (nearestEntity(context, EntityType.MiniSquirrelBot));
-        XY nearestBP = nearestEntity(context, EntityType.BadPlant);
-        XY nearestBB = nearestEntity(context, EntityType.BadBeast);
-        XY nearestGB = nearestEntity(context, EntityType.GoodBeast);
-        XY nearestGP = nearestEntity(context, EntityType.GoodPlant);
-        XY nearestWW = nearestEntity(context, EntityType.Wall);
+        XY nearestMasterBot = nearestEntity(context, EntityType.MASTER_SQUIRREL_BOT);
+        XY nearestMaster = nearestEntity(context, EntityType.MASTER_SQUIRREL);
+        XY nearestMini = (nearestEntity(context, EntityType.MINI_SQUIRREL));
+        XY nearestMiniBot = (nearestEntity(context, EntityType.MINI_SQUIRREL_BOT));
+        XY nearestBP = nearestEntity(context, EntityType.BAD_PLANT);
+        XY nearestBB = nearestEntity(context, EntityType.BAD_BEAST);
+        XY nearestGB = nearestEntity(context, EntityType.GOOD_BEAST);
+        XY nearestGP = nearestEntity(context, EntityType.GOOD_PLANT);
+        XY nearestWW = nearestEntity(context, EntityType.WALL);
         XY nearestPositive;
         if (nearestGB.distanceFrom(context.locate()) < nearestGP.distanceFrom(context.locate()))
             nearestPositive = nearestGB;

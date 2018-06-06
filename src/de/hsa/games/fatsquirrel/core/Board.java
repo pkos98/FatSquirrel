@@ -5,17 +5,16 @@ import de.hsa.games.fatsquirrel.entities.Entity;
 public class Board {
 
     private Entity[][] entities;
-
-    public BoardConfig getBoardConfig() {
-        return boardConfig;
-    }
-
     private BoardConfig boardConfig;
     private FlattenedBoard boardCache;
 
     public Board(BoardConfig config) {
         this.boardConfig = config;
         this.entities = new Entity[config.getSize().getX()][config.getSize().getY()];
+    }
+
+    public BoardConfig getBoardConfig() {
+        return boardConfig;
     }
 
     public XY getSize() {
@@ -36,11 +35,11 @@ public class Board {
         return entities;
     }
 
-    public Entity getEntity (XY location){
+    public Entity getEntity(XY location) {
         return null;
     }
 
-    public void deleteEntity(Entity entity){
+    public void deleteEntity(Entity entity) {
         entities[entity.getPosition().getX()][entity.getPosition().getY()] = null;
     }
 }

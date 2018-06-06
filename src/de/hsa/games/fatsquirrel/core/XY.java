@@ -4,9 +4,6 @@ import java.util.Random;
 
 public final class XY {
 
-    private static Random random = new Random();
-    private final int x, y;
-
     public static final XY ZERO_ZERO = new XY(0, 0);
     public static final XY RIGHT = new XY(1, 0);
     public static final XY LEFT = new XY(-1, 0);
@@ -16,6 +13,13 @@ public final class XY {
     public static final XY RIGHT_DOWN = new XY(1, 1);
     public static final XY LEFT_UP = new XY(-1, -1);
     public static final XY LEFT_DOWN = new XY(-1, 1);
+    private static Random random = new Random();
+    private final int x, y;
+
+    public XY(int x, int y) {
+        this.x = x;
+        this.y = y;
+    }
 
     public int getX() {
         return x;
@@ -32,11 +36,6 @@ public final class XY {
     @Override
     public String toString() {
         return "X: " + x + " | Y:" + y;
-    }
-
-    public XY(int x, int y) {
-        this.x = x;
-        this.y = y;
     }
 
     public double convertDistance(XY b) {
@@ -59,11 +58,11 @@ public final class XY {
 
     @Override
     public boolean equals(Object obj) {
-        if (obj == null || ! (obj instanceof XY))
+        if (obj == null || !(obj instanceof XY))
             return false;
         else if (obj == this)
             return true;
-        XY xy = (XY)obj;
+        XY xy = (XY) obj;
         return getX() == xy.getX() && getY() == xy.getY();
     }
 }

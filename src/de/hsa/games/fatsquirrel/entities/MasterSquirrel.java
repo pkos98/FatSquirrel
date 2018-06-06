@@ -9,12 +9,12 @@ import java.util.logging.Logger;
 public abstract class MasterSquirrel extends PlayerEntity {
 
 
-    private List<MiniSquirrel> miniSquirrels = new LinkedList<>();
     private static int START_ENERGY = 0;
+    private List<MiniSquirrel> miniSquirrels = new LinkedList<>();
     private Logger logger = Logger.getLogger(this.getClass().getName());
 
 
-    public MasterSquirrel(int id, int startEnergy,XY startPos) {
+    public MasterSquirrel(int id, int startEnergy, XY startPos) {
         super(id, startEnergy, startPos);
     }
 
@@ -29,7 +29,7 @@ public abstract class MasterSquirrel extends PlayerEntity {
 
     @Override
     public String toString() {
-        return "MasterSquirrel";
+        return "MASTER_SQUIRREL";
     }
 
 

@@ -1,10 +1,10 @@
 package de.hsa.games.fatsquirrel.ui.fxui;
 
-import de.hsa.games.fatsquirrel.ui.console.GameCommandType;
 import de.hsa.games.fatsquirrel.core.BoardView;
 import de.hsa.games.fatsquirrel.core.EntityContext;
 import de.hsa.games.fatsquirrel.core.EntityType;
 import de.hsa.games.fatsquirrel.core.XY;
+import de.hsa.games.fatsquirrel.ui.console.GameCommandType;
 import javafx.application.Platform;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
@@ -20,11 +20,11 @@ import java.util.logging.Logger;
 
 public class FxUI extends Scene implements de.hsa.games.fatsquirrel.UI {
 
+    private static final int CELL_SIZE = 15;
     private final Canvas boardCanvas;
     private final Label msgLabel;
     private final Logger logger = Logger.getLogger(this.getClass().getName());
     private EntityContext context;
-    private static final int CELL_SIZE = 15;
     private GameCommandType command;
 
     public FxUI(Parent parent, Canvas boardCanvas, Label msgLabel) {
@@ -43,11 +43,6 @@ public class FxUI extends Scene implements de.hsa.games.fatsquirrel.UI {
         statusLabel.setText("Hallo Welt");
         final FxUI fxUI = new FxUI(top, boardCanvas, statusLabel);
         return fxUI;
-    }
-
-    private void setCommand(GameCommandType command) {
-        this.command = command;
-        logger.info("Command " + command + " received");
     }
 
     @Override
@@ -82,31 +77,31 @@ public class FxUI extends Scene implements de.hsa.games.fatsquirrel.UI {
         }
 
         switch (entityType) {
-            case GoodBeast:
+            case GOOD_BEAST:
                 gc.setFill(Color.GREEN);
                 gc.fillOval(xPos, yPos, CELL_SIZE, CELL_SIZE);
                 break;
-            case BadBeast:
+            case BAD_BEAST:
                 gc.setFill(Color.RED);
                 gc.fillOval(xPos, yPos, CELL_SIZE, CELL_SIZE);
                 break;
-            case GoodPlant:
+            case GOOD_PLANT:
                 gc.setFill(Color.GREEN);
                 gc.fillRect(xPos, yPos, CELL_SIZE, CELL_SIZE);
                 break;
-            case BadPlant:
+            case BAD_PLANT:
                 gc.setFill(Color.RED);
                 gc.fillRect(xPos, yPos, CELL_SIZE, CELL_SIZE);
                 break;
-            case Wall:
+            case WALL:
                 gc.setFill(Color.GRAY);
                 gc.fillRect(xPos, yPos, CELL_SIZE, CELL_SIZE);
                 break;
-            case MasterSquirrel:
+            case MASTER_SQUIRREL:
                 gc.setFill(Color.GOLD);
                 gc.fillOval(xPos, yPos, CELL_SIZE, CELL_SIZE);
                 break;
-            case MiniSquirrel:
+            case MINI_SQUIRREL:
                 break;
         }
     }
@@ -118,6 +113,11 @@ public class FxUI extends Scene implements de.hsa.games.fatsquirrel.UI {
     @Override
     public GameCommandType getCommand() {
         return command;
+    }
+
+    private void setCommand(GameCommandType command) {
+        this.command = command;
+        logger.info("Command " + command + " received");
     }
 
     @Override
