@@ -4,34 +4,34 @@ import de.hsa.games.fatsquirrel.entities.*;
 
 public enum EntityType {
 
-    GoodBeast,
-    BadBeast,
-    GoodPlant,
-    BadPlant,
-    Wall,
-    MasterSquirrel,
-    MiniSquirrel,
-    MasterSquirrelBot,
-    MiniSquirrelBot;
+    GOOD_BEAST,
+    BAD_BEAST,
+    GOOD_PLANT,
+    BAD_PLANT,
+    WALL,
+    MASTER_SQUIRREL,
+    MINI_SQUIRREL,
+    MASTER_SQUIRREL_BOT,
+    MINI_SQUIRREL_BOT;
 
 
     public static EntityType fromEntity(Entity entity) {
         if (entity instanceof GoodBeast)
-            return EntityType.GoodBeast;
+            return EntityType.GOOD_BEAST;
         else if (entity instanceof BadBeast)
-            return EntityType.BadBeast;
+            return EntityType.BAD_BEAST;
         else if (entity instanceof GoodPlant)
-            return EntityType.GoodPlant;
+            return EntityType.GOOD_PLANT;
         else if (entity instanceof BadPlant)
-            return EntityType.BadPlant;
+            return EntityType.BAD_PLANT;
         else if (entity instanceof Wall)
-            return EntityType.Wall;
+            return EntityType.WALL;
         else if (entity instanceof MasterSquirrel)
-            return EntityType.MasterSquirrel;
+            return EntityType.MASTER_SQUIRREL;
         else if (entity instanceof MiniSquirrel)
-            return EntityType.MiniSquirrel;
+            return EntityType.MINI_SQUIRREL;
         else if (entity instanceof MasterSquirrelBot)
-            return EntityType.MasterSquirrelBot;
+            return EntityType.MASTER_SQUIRREL_BOT;
         else
             return null;        //is equal to none
     }
