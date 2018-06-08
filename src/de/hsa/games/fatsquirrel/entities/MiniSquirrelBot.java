@@ -68,7 +68,7 @@ public class MiniSquirrelBot extends MiniSquirrel {
             MasterSquirrel masterSquirrelOfMiniSquirrel = ((MiniSquirrel) entity).getPatron();
 
             switch (EntityType.fromEntity(entitytoCheck)) {
-                case MASTER_SQUIRREL:
+                case HAND_OPERATED_MASTER_SQUIRREL:
                     return masterSquirrelOfMiniSquirrel.equals(entitytoCheck);
                 case MINI_SQUIRREL:
                     return masterSquirrelOfMiniSquirrel.equals(((MiniSquirrel) entitytoCheck).getPatron());
@@ -91,7 +91,7 @@ public class MiniSquirrelBot extends MiniSquirrel {
             case WALL:
                 energyCollected = 0;
                 break;
-            case MASTER_SQUIRREL:
+            case HAND_OPERATED_MASTER_SQUIRREL:
             case MASTER_SQUIRREL_BOT:
                 energyCollected = (int) energyLoss;
                 entity.updateEnergy(-(int) energyLoss);
@@ -283,7 +283,7 @@ public class MiniSquirrelBot extends MiniSquirrel {
                             if (entity.getEnergy() <= 0)
                                 context.killAndReplace(entity);
                             break;
-                        case MASTER_SQUIRREL:
+                        case HAND_OPERATED_MASTER_SQUIRREL:
                         case MASTER_SQUIRREL_BOT:
                             MasterSquirrel masterSquirrel = (MasterSquirrel) entity;
                             if (!(masterSquirrel.isPatronOf(MiniSquirrelBot.this)))

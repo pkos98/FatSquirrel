@@ -29,7 +29,7 @@ public abstract class MasterSquirrel extends PlayerEntity {
 
     @Override
     public String toString() {
-        return "MASTER_SQUIRREL";
+        return "HAND_OPERATED_MASTER_SQUIRREL";
     }
 
 

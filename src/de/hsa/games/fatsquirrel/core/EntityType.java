@@ -9,10 +9,10 @@ public enum EntityType {
     GOOD_PLANT,
     BAD_PLANT,
     WALL,
-    MASTER_SQUIRREL,
-    MINI_SQUIRREL,
+    HAND_OPERATED_MASTER_SQUIRREL,
     MASTER_SQUIRREL_BOT,
-    MINI_SQUIRREL_BOT;
+    MINI_SQUIRREL_BOT,
+    MINI_SQUIRREL;
 
 
     public static EntityType fromEntity(Entity entity) {
@@ -26,12 +26,14 @@ public enum EntityType {
             return EntityType.BAD_PLANT;
         else if (entity instanceof Wall)
             return EntityType.WALL;
-        else if (entity instanceof MasterSquirrel)
-            return EntityType.MASTER_SQUIRREL;
-        else if (entity instanceof MiniSquirrel)
-            return EntityType.MINI_SQUIRREL;
+        else if (entity instanceof HandOperatedMasterSquirrel)
+            return EntityType.HAND_OPERATED_MASTER_SQUIRREL;
         else if (entity instanceof MasterSquirrelBot)
             return EntityType.MASTER_SQUIRREL_BOT;
+        else if (entity instanceof MiniSquirrelBot)
+            return EntityType.MINI_SQUIRREL_BOT;
+        else if (entity instanceof MiniSquirrel)
+            return EntityType.MINI_SQUIRREL;
         else
             return null;        //is equal to none
     }

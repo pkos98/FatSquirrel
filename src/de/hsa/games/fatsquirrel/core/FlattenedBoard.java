@@ -160,7 +160,7 @@ public class FlattenedBoard implements EntityContext, BoardView {
 
     @Override
     public void spawnMiniSquirrel() {
-        // 1. MASTER_SQUIRREL finden
+        // 1. HAND_OPERATED_MASTER_SQUIRREL finden
         logger.info("MINI_SQUIRREL spawned");
         MasterSquirrel masterSquirrel = findMasterSquirrel();
         XY randomPos = XYSupport.getRandomEmptyPosition(board.getSize().getX(), board.getSize().getY(), this);
