@@ -155,7 +155,7 @@ public class FlattenedBoard implements EntityContext, BoardView {
 
     @Override
     public EntityType getEntityType(XY xy) {
-        return EntityType.fromEntity(cells[xy.getX()][xy.getY()]);
+        return EntityType.fromEntity(getEntity(xy));
     }
 
     @Override
