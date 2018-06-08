@@ -97,6 +97,7 @@ public class FxUI extends Scene implements de.hsa.games.fatsquirrel.UI {
                 gc.setFill(Color.GRAY);
                 gc.fillRect(xPos, yPos, CELL_SIZE, CELL_SIZE);
                 break;
+            case MASTER_SQUIRREL_BOT:
             case HAND_OPERATED_MASTER_SQUIRREL:
                 gc.setFill(Color.GOLD);
                 gc.fillOval(xPos, yPos, CELL_SIZE, CELL_SIZE);
