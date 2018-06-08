@@ -60,7 +60,7 @@ public class ConsoleUI implements UI {
                 return "BP";
             case WALL:
                 return "WA";
-            case MASTER_SQUIRREL:
+            case HAND_OPERATED_MASTER_SQUIRREL:
                 return "MS";
             case MINI_SQUIRREL:
                 return "mS";

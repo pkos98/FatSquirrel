@@ -15,7 +15,7 @@ public class BotHelper {
     public static XY moveToNearestGoodEntity(ControllerContext context) {
         XY moveDirection = XY.ZERO_ZERO;
         XY nearestMasterBot = nearestEntity(context, EntityType.MASTER_SQUIRREL_BOT);
-        XY nearestMaster = nearestEntity(context, EntityType.MASTER_SQUIRREL);
+        XY nearestMaster = nearestEntity(context, EntityType.HAND_OPERATED_MASTER_SQUIRREL);
         XY nearestMini = (nearestEntity(context, EntityType.MINI_SQUIRREL));
         XY nearestMiniBot = (nearestEntity(context, EntityType.MINI_SQUIRREL_BOT));
         XY nearestBP = nearestEntity(context, EntityType.BAD_PLANT);
@@ -89,7 +89,7 @@ public class BotHelper {
     static boolean checkSpawnField(ControllerContext context, XY location) {
         try {
             EntityType entityType = context.getEntityAt(location);
-            return entityType == null;
+            return entityType == EntityType.EMPTY_FIELD;
         } catch (OutOfViewException e) {
             logger.finer("No Entity in spawnfield");
         }
