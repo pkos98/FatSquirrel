@@ -12,7 +12,8 @@ public enum EntityType {
     HAND_OPERATED_MASTER_SQUIRREL,
     MASTER_SQUIRREL_BOT,
     MINI_SQUIRREL_BOT,
-    MINI_SQUIRREL;
+    MINI_SQUIRREL,
+    EMPTY_FIELD;
 
 
     public static EntityType fromEntity(Entity entity) {
@@ -35,6 +36,6 @@ public enum EntityType {
         else if (entity instanceof MiniSquirrel)
             return EntityType.MINI_SQUIRREL;
         else
-            return null;        //is equal to none
+            return EntityType.EMPTY_FIELD;
     }
 }

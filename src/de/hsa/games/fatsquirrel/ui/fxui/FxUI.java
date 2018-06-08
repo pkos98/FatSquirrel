@@ -70,11 +70,6 @@ public class FxUI extends Scene implements de.hsa.games.fatsquirrel.UI {
     private void drawEntity(GraphicsContext gc, EntityType entityType, XY pos) {
         int xPos = pos.getX() * CELL_SIZE;
         int yPos = pos.getY() * CELL_SIZE;
-        if (entityType == null) {
-            gc.setFill(Color.WHITE);
-            gc.fillRect(xPos, yPos, CELL_SIZE, CELL_SIZE);
-            return;
-        }
 
         switch (entityType) {
             case GOOD_BEAST:
@@ -102,8 +97,9 @@ public class FxUI extends Scene implements de.hsa.games.fatsquirrel.UI {
                 gc.setFill(Color.GOLD);
                 gc.fillOval(xPos, yPos, CELL_SIZE, CELL_SIZE);
                 break;
-            case MINI_SQUIRREL:
-                break;
+            case EMPTY_FIELD:
+                gc.setFill(Color.WHITE);
+                gc.fillRect(xPos, yPos, CELL_SIZE, CELL_SIZE);
         }
     }
 
