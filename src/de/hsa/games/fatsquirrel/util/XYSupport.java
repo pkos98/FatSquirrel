@@ -1,6 +1,7 @@
 package de.hsa.games.fatsquirrel.util;
 
 import de.hsa.games.fatsquirrel.core.EntityContext;
+import de.hsa.games.fatsquirrel.core.EntityType;
 import de.hsa.games.fatsquirrel.core.XY;
 import de.hsa.games.fatsquirrel.ui.console.GameCommandType;
 
@@ -18,7 +19,7 @@ public class XYSupport {
 
     public static XY getRandomEmptyPosition(int width, int heigth, EntityContext context) {
         XY randomPos = getRandomPosition(width, heigth);
-        while (context.getEntityType(randomPos) != null)
+        while (context.getEntityType(randomPos) != EntityType.EMPTY_FIELD)
             randomPos = getRandomPosition(width, heigth);
         return randomPos;
     }
@@ -50,11 +51,8 @@ public class XYSupport {
     public static boolean isInRange(XY start, XY target, int viewDistance) {
         if (Math.abs(start.getX() - target.getX()) > (viewDistance - 1) / 2) {
             return false;
-        } else if (Math.abs(start.getY() - target.getY()) > (viewDistance - 1) / 2) {
-            return false;
-        }
+        } else return Math.abs(start.getY() - target.getY()) <= (viewDistance - 1) / 2;
 
-        return true;
     }
 
     public static XY decreaseDistance(XY start, XY target) {

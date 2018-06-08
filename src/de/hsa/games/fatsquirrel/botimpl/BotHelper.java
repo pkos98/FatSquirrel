@@ -89,7 +89,7 @@ public class BotHelper {
     static boolean checkSpawnField(ControllerContext context, XY location) {
         try {
             EntityType entityType = context.getEntityAt(location);
-            return entityType == null;
+            return entityType == EntityType.EMPTY_FIELD;
         } catch (OutOfViewException e) {
             logger.finer("No Entity in spawnfield");
         }
