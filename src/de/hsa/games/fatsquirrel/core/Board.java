@@ -67,15 +67,35 @@ public class Board {
         entities[entity.getPosition().getX()][entity.getPosition().getY()] = entity;
     }
 
-    public Entity[][] getEntities() {
-        return entities;
-    }
-
-    public Entity getEntity(XY location) {
-        return null;
-    }
-
-    public void deleteEntity(Entity entity) {
-        entities[entity.getPosition().getX()][entity.getPosition().getY()] = null;
+    private void initBoard() {
+        XY pos;
+        // Instantiate upper & lower boundary walls
+        for (int x = 0; x < getWidth(); x++) {
+            entities.add(new Wall(Entity.ID_AUTO_GENERATE, new XY(x, 0)));
+            entities.add(new Wall(Entity.ID_AUTO_GENERATE, new XY(x, getHeight() - 1)));
+        }
+        // Instantiate upper & lower boundary walls
+        for (int y = 1; y < getHeight(); y++) {
+            entities.add(new Wall(Entity.ID_AUTO_GENERATE, new XY(0, y)));
+            entities.add(new Wall(Entity.ID_AUTO_GENERATE, new XY(getWidth() - 1, y)));
+        }
+        for (int i = 0; i < getBoardConfig().getNumberGoodBeasts(); i++) {
+            pos = XYSupport.getRandomEmptyPosition(getWidth(), getHeight(), flatten());
+            entities.add(new GoodBeast(Entity.ID_AUTO_GENERATE, pos));
+        }
+        for (int i = 0; i < getBoardConfig().getNumberGoodPlants(); i++) {
+            pos = XYSupport.getRandomEmptyPosition(getWidth(), getHeight(), flatten());
+            entities.add(new GoodPlant(Entity.ID_AUTO_GENERATE, pos));
+        }
+        for (int i = 0; i < getBoardConfig().getNumberBadBeasts(); i++) {
+            pos = XYSupport.getRandomEmptyPosition(getWidth(), getHeight(), flatten());
+            entities.add(new BadBeast(Entity.ID_AUTO_GENERATE, pos));
+        }
+        for (int i = 0; i < getBoardConfig().getNumberBadPlants(); i++) {
+            pos = XYSupport.getRandomEmptyPosition(getWidth(), getHeight(), flatten());
+            entities.add(new BadPlant(Entity.ID_AUTO_GENERATE, pos));
+        }
+        pos = XYSupport.getRandomEmptyPosition(getWidth(), getHeight(), flatten());
+        entities.add(new HandOperatedMasterSquirrel(Entity.ID_AUTO_GENERATE, 100, pos));
     }
 }
