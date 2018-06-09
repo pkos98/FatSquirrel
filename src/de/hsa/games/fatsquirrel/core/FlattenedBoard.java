@@ -122,9 +122,7 @@ public class FlattenedBoard implements EntityContext, BoardView {
     @Override
     public void tryMove(MasterSquirrel masterSquirrel, XY moveDirection) {
         XY nextPosition = XYSupport.add(masterSquirrel.getPosition(), moveDirection);
-        if (nextPosition.getX() >= board.getWidth() || nextPosition.getX() < 0)
-            return;
-        else if (nextPosition.getY() >= board.getHeight() || nextPosition.getY() < 0)
+        if (!board.isInBoardRange(nextPosition))
             return;
 
         Entity nextEntity = getEntity(nextPosition.getX(), nextPosition.getY());
@@ -196,7 +194,7 @@ public class FlattenedBoard implements EntityContext, BoardView {
         // 1. HAND_OPERATED_MASTER_SQUIRREL finden
         logger.info("MINI_SQUIRREL spawned");
         MasterSquirrel masterSquirrel = findMasterSquirrel();
-        XY randomPos = XYSupport.getRandomEmptyPosition(board.getSize().getX(), board.getSize().getY(), this);
+        XY randomPos = XYSupport.getRandomEmptyPosition(board.getWidth(), board.getHeight(), this);
         MiniSquirrel miniSquirrel = new MiniSquirrel(42, randomPos, masterSquirrel);
         masterSquirrel.addMiniSquirrel(miniSquirrel);
 

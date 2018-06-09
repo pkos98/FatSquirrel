@@ -63,8 +63,11 @@ public class Board {
         return boardCache;
     }
 
-    public void insertEntity(Entity entity) {
-        entities[entity.getPosition().getX()][entity.getPosition().getY()] = entity;
+    public boolean isInBoardRange(XY pos) {
+        int x = pos.getX();
+        int y = pos.getY();
+        return !((x < 0 || x >= getWidth()) ||
+                (y < 0 || y >= getHeight()));
     }
 
     private void initBoard() {
