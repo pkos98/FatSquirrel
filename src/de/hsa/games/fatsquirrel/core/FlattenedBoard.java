@@ -46,7 +46,7 @@ public class FlattenedBoard implements EntityContext, BoardView {
 
         XY nextPosition = new XY(miniSquirrel.getPosition().getX() + moveDirection.getX(),
                 miniSquirrel.getPosition().getY() + moveDirection.getY());
-        Entity nextEntity = cells[nextPosition.getX()][nextPosition.getY()];
+        Entity nextEntity = getEntity(nextPosition.getX(), nextPosition.getY());
         EntityType type = EntityType.fromEntity(nextEntity);
         switch (type) {
 
@@ -84,7 +84,7 @@ public class FlattenedBoard implements EntityContext, BoardView {
     public void tryMove(GoodBeast goodBeast, XY moveDirection) {
         XY nextPosition = new XY(goodBeast.getPosition().getX() + moveDirection.getX(),
                 goodBeast.getPosition().getY() + moveDirection.getY());
-        Entity nextEntity = cells[nextPosition.getX()][nextPosition.getY()];
+        Entity nextEntity = getEntity(nextPosition.getX(), nextPosition.getY());
         EntityType type = EntityType.fromEntity(nextEntity);
         switch (type) {
             case HAND_OPERATED_MASTER_SQUIRREL:
@@ -104,7 +104,7 @@ public class FlattenedBoard implements EntityContext, BoardView {
     public void tryMove(BadBeast badBeast, XY moveDirection) {
         XY nextPosition = new XY(badBeast.getPosition().getX() + moveDirection.getX(),
                 badBeast.getPosition().getY() + moveDirection.getY());
-        Entity nextEntity = cells[nextPosition.getX()][nextPosition.getY()];
+        Entity nextEntity = getEntity(nextPosition.getX(), nextPosition.getY());
         EntityType type = EntityType.fromEntity(nextEntity);
         switch (type) {
             case MINI_SQUIRREL:
@@ -127,7 +127,7 @@ public class FlattenedBoard implements EntityContext, BoardView {
         else if (nextPosition.getY() >= board.getHeight() || nextPosition.getY() < 0)
             return;
 
-        Entity nextEntity = cells[nextPosition.getX()][nextPosition.getY()];
+        Entity nextEntity = getEntity(nextPosition.getX(), nextPosition.getY());
         EntityType type = EntityType.fromEntity(nextEntity);
         switch (type) {
             case WALL:
