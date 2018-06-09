@@ -40,13 +40,13 @@ public class BadBeast extends Character {
             return getPosition();
         } else {
             nextStepCounter++;
-            context.tryMove(this, botApi(this, context));
-            return botApi(this, context);
+            context.tryMove(this, XYSupport.getRandomMoveVector());
+            return getPosition();//botApi(this, context);
         }
     }
 
     public XY botApi(BadBeast badBeast, EntityContext context) {
-        XY botapi;
+      /*  XY botapi;
         for (int IterX = badBeast.getPosition().getX() - viewDistance; IterX < badBeast.getPosition().getX() + viewDistance; IterX++) {
             for (int IterY = badBeast.getPosition().getY() - viewDistance; IterY < badBeast.getPosition().getY() + viewDistance; IterY++) {
                 if (IterX >= 0 && IterY >= 0 && IterX < 40 && IterY < 40) {
@@ -74,6 +74,7 @@ public class BadBeast extends Character {
             }
         }
         context.tryMove(this, XYSupport.getRandomMoveVector());
-        return XYSupport.getRandomMoveVector();
+        return XYSupport.getRandomMoveVector();*/
+        return null;
     }
 }
