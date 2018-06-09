@@ -10,10 +10,10 @@ public class BoardConfig {
         this.size = size;
         this.wallCount = wallCount;
         numberWalls = 10;
-        numberBadPlants = 5;
-        numberBadBeasts = 5;
-        numberGoodPlants = 5;
-        numberGoodBeasts = 5;
+        numberBadPlants = 1;
+        numberBadBeasts = 1;
+        numberGoodPlants = 1;
+        numberGoodBeasts = 1;
     }
 
     public XY getSize() {
