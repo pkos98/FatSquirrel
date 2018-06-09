@@ -2,6 +2,7 @@ package de.hsa.games.fatsquirrel.core;
 
 import de.hsa.games.fatsquirrel.entities.*;
 import de.hsa.games.fatsquirrel.util.XYSupport;
+import javafx.collections.ListChangeListener;
 
 import java.util.logging.Logger;
 
@@ -14,8 +15,19 @@ public class FlattenedBoard implements EntityContext, BoardView {
 
     public FlattenedBoard(Board board) {
         this.board = board;
-        cells = board.getEntities();
-        createEntities();
+        cells = new Entity[board.getWidth()][board.getHeight()];
+        board.getObservableList().addListener(new ListChangeListener<Entity>() {
+            @Override
+            public void onChanged(Change<? extends Entity> c) {
+                while (c.next()) {
+                    Entity iterEntity = c.getList().get(c.getFrom());
+                    if (c.wasAdded())
+                        setCell(iterEntity, iterEntity.getPosition());
+                    else if (c.wasRemoved())
+                        setCell(null, iterEntity.getPosition());
+                }
+            }
+        });
     }
 
     @Override
@@ -47,7 +59,7 @@ public class FlattenedBoard implements EntityContext, BoardView {
 
         XY nextPosition = new XY(miniSquirrel.getPosition().getX() + moveDirection.getX(),
                 miniSquirrel.getPosition().getY() + moveDirection.getY());
-        Entity nextEntity = cells[nextPosition.getX()][nextPosition.getY()];
+        Entity nextEntity = getEntity(nextPosition.getX(), nextPosition.getY());
         EntityType type = EntityType.fromEntity(nextEntity);
         switch (type) {
 
@@ -85,7 +97,9 @@ public class FlattenedBoard implements EntityContext, BoardView {
     public void tryMove(GoodBeast goodBeast, XY moveDirection) {
         XY nextPosition = new XY(goodBeast.getPosition().getX() + moveDirection.getX(),
                 goodBeast.getPosition().getY() + moveDirection.getY());
-        Entity nextEntity = cells[nextPosition.getX()][nextPosition.getY()];
+        if (!board.isInBoardRange(nextPosition))
+            return;
+        Entity nextEntity = getEntity(nextPosition.getX(), nextPosition.getY());
         EntityType type = EntityType.fromEntity(nextEntity);
         switch (type) {
             case HAND_OPERATED_MASTER_SQUIRREL:
@@ -105,7 +119,7 @@ public class FlattenedBoard implements EntityContext, BoardView {
     public void tryMove(BadBeast badBeast, XY moveDirection) {
         XY nextPosition = new XY(badBeast.getPosition().getX() + moveDirection.getX(),
                 badBeast.getPosition().getY() + moveDirection.getY());
-        Entity nextEntity = cells[nextPosition.getX()][nextPosition.getY()];
+        Entity nextEntity = getEntity(nextPosition.getX(), nextPosition.getY());
         EntityType type = EntityType.fromEntity(nextEntity);
         switch (type) {
             case MINI_SQUIRREL:
@@ -123,12 +137,10 @@ public class FlattenedBoard implements EntityContext, BoardView {
     @Override
     public void tryMove(MasterSquirrel masterSquirrel, XY moveDirection) {
         XY nextPosition = XYSupport.add(masterSquirrel.getPosition(), moveDirection);
-        if (nextPosition.getX() >= board.getBoardConfig().getSize().getX() || nextPosition.getX() < 0)
-            return;
-        else if (nextPosition.getY() >= board.getBoardConfig().getSize().getY() || nextPosition.getY() < 0)
+        if (!board.isInBoardRange(nextPosition))
             return;
 
-        Entity nextEntity = cells[nextPosition.getX()][nextPosition.getY()];
+        Entity nextEntity = getEntity(nextPosition.getX(), nextPosition.getY());
         EntityType type = EntityType.fromEntity(nextEntity);
         switch (type) {
             case WALL:
@@ -197,7 +209,7 @@ public class FlattenedBoard implements EntityContext, BoardView {
         // 1. HAND_OPERATED_MASTER_SQUIRREL finden
         logger.info("MINI_SQUIRREL spawned");
         MasterSquirrel masterSquirrel = findMasterSquirrel();
-        XY randomPos = XYSupport.getRandomEmptyPosition(board.getSize().getX(), board.getSize().getY(), this);
+        XY randomPos = XYSupport.getRandomEmptyPosition(board.getWidth(), board.getHeight(), this);
         MiniSquirrel miniSquirrel = new MiniSquirrel(42, randomPos, masterSquirrel);
         masterSquirrel.addMiniSquirrel(miniSquirrel);
 
@@ -209,7 +221,7 @@ public class FlattenedBoard implements EntityContext, BoardView {
         for (int iterX = location.getX() - impactRadius; iterX <= location.getX() + impactRadius; iterX++) {
             innerLoop:
             for (int iterY = location.getX() - impactRadius; iterY <= location.getX() + impactRadius; iterY++) {
-                Entity entity = board.getEntity(new XY(iterX, iterX));
+                Entity entity = getEntity(iterX, iterY);
                 EntityType type = EntityType.fromEntity(entity);
                 XY XYdistance = new XY(iterX, iterX);
                 double distance = XYdistance.convertDistance(XYdistance.distanceFromXY(entity.getPosition()));
@@ -260,59 +272,6 @@ public class FlattenedBoard implements EntityContext, BoardView {
 
     }
 
-    private void createEntities() {
-        logger.info("Initializing board. Creating entities");
-        int width = board.getSize().getX();
-        int height = board.getSize().getY();
-        for (int x = 0; x < width; x++) {
-            cells[x][0] = new Wall(Entity.ID_AUTO_GENERATE, new XY(x, 0));
-            cells[x][height - 1] = new Wall(Entity.ID_AUTO_GENERATE, new XY(x, height - 1));
-        }
-        for (int y = 1; y < height; y++) {
-            cells[0][y] = new Wall(Entity.ID_AUTO_GENERATE, new XY(0, y));
-            cells[width - 1][y] = new Wall(Entity.ID_AUTO_GENERATE, new XY(width - 1, y));
-        }
-        for (int i = 0; i < board.getBoardConfig().getNumberGoodBeasts(); i++) {
-            XY pos = XYSupport.getRandomEmptyPosition(width, height, this);
-            cells[pos.getX()][pos.getY()] = new GoodBeast(Entity.ID_AUTO_GENERATE, pos);
-        }
-        for (int i = 0; i < board.getBoardConfig().getNumberGoodPlants(); i++) {
-            XY pos = XYSupport.getRandomEmptyPosition(width, height, this);
-            cells[pos.getX()][pos.getY()] = new GoodPlant(Entity.ID_AUTO_GENERATE, pos);
-        }
-        for (int i = 0; i < board.getBoardConfig().getNumberBadBeasts(); i++) {
-            XY pos = XYSupport.getRandomEmptyPosition(width, height, this);
-            cells[pos.getX()][pos.getY()] = new BadBeast(Entity.ID_AUTO_GENERATE, pos);
-        }
-        for (int i = 0; i < board.getBoardConfig().getNumberBadPlants(); i++) {
-            XY pos = XYSupport.getRandomEmptyPosition(width, height, this);
-            cells[pos.getX()][pos.getY()] = new BadPlant(Entity.ID_AUTO_GENERATE, pos);
-        }
-        XY pos = XYSupport.getRandomEmptyPosition(width, height, this);
-        cells[pos.getX()][pos.getY()] = new HandOperatedMasterSquirrel(Entity.ID_AUTO_GENERATE, 100, pos);
-    }
-
-    private MasterSquirrel findMasterSquirrel() {
-        if (masterSquirrelCache != null)
-            return masterSquirrelCache;
-        for (int x = 0; x < board.getSize().getX(); x++) {
-            for (int y = 0; y < board.getSize().getY(); y++) {
-                Entity iterCell = getEntity(x, y);
-                EntityType type = EntityType.fromEntity(iterCell);
-                if (!((type != EntityType.MASTER_SQUIRREL_BOT) || type != EntityType.HAND_OPERATED_MASTER_SQUIRREL))
-                    continue;
-                masterSquirrelCache = (MasterSquirrel) iterCell;
-            }
-        }
-        return findMasterSquirrel();
-    }
-
-    private void move(Entity entity, XY newPos) {
-        cells[entity.getPosition().getX()][entity.getPosition().getY()] = null;
-        cells[newPos.getX()][newPos.getY()] = entity;
-        entity.setPosition(newPos);
-    }
-
     public XY getAwayfromPosition(Entity entity, XY position) {
         int toMoveX, toMoveY;
         if (entity.getPosition().getY() - position.getY() <= 0)
@@ -344,4 +303,39 @@ public class FlattenedBoard implements EntityContext, BoardView {
             toMoveX = 0;
         return new XY(toMoveX, toMoveY);
     }
+
+    private MasterSquirrel findMasterSquirrel() {
+        if (masterSquirrelCache != null)
+            return masterSquirrelCache;
+        for (int x = 0; x < board.getSize().getX(); x++) {
+            for (int y = 0; y < board.getSize().getY(); y++) {
+                Entity iterCell = getEntity(x, y);
+                EntityType type = EntityType.fromEntity(iterCell);
+                if (!((type != EntityType.MASTER_SQUIRREL_BOT) || type != EntityType.HAND_OPERATED_MASTER_SQUIRREL))
+                    continue;
+                masterSquirrelCache = (MasterSquirrel) iterCell;
+            }
+        }
+        return findMasterSquirrel();
+    }
+
+    private void move(Entity entity, XY newPos) {
+        cells[entity.getPosition().getX()][entity.getPosition().getY()] = null;
+        cells[newPos.getX()][newPos.getY()] = entity;
+        entity.setPosition(newPos);
+    }
+
+    private void setCell(Entity entity, XY pos) {
+        cells[pos.getX()][pos.getY()] = entity;
+    }
+
+    private void updateCells() {
+        cells = new Entity[board.getWidth()][board.getHeight()];
+        for (int i = 0; i < board.getEntities().size(); i++) {
+            Entity iterEntity = board.getEntities().get(i);
+            cells[iterEntity.getPosition().getX()][iterEntity.getPosition().getY()] = iterEntity;
+        }
+    }
+
+
 }

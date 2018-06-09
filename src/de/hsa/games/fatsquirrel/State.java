@@ -1,6 +1,7 @@
 package de.hsa.games.fatsquirrel;
 
 import de.hsa.games.fatsquirrel.core.Board;
+import de.hsa.games.fatsquirrel.core.EntityType;
 import de.hsa.games.fatsquirrel.core.FlattenedBoard;
 import de.hsa.games.fatsquirrel.entities.Character;
 import de.hsa.games.fatsquirrel.entities.Entity;
@@ -17,19 +18,22 @@ public class State {
     }
 
     public void update() {
-        for (int x = 0; x < board.getSize().getX(); x++) {
-            for (int y = 0; y < board.getSize().getY(); y++) {
-                Entity iterField = board.getEntities()[x][y];
-                if (iterField == null)
+        for (int i = 0; i < board.getEntities().size(); i++) {
+            Entity iterEntity = board.getEntities().get(i);
+            EntityType type = EntityType.fromEntity(iterEntity);
+            switch (type) {
+                case EMPTY_FIELD:
                     continue;
-                // If NOT NULL
-                if (iterField instanceof HandOperatedMasterSquirrel) {
-                    ((HandOperatedMasterSquirrel) iterField).setInput(input);
+                case HAND_OPERATED_MASTER_SQUIRREL:
+                    ((HandOperatedMasterSquirrel) iterEntity).setInput(input);
                     setInput(null);
-                }
-
-                if (iterField instanceof Character)
-                    ((Character) iterField).nextStep(flattenedBoard());
+                    ((Character) iterEntity).nextStep(flattenedBoard());
+                    break;
+                case BAD_BEAST:
+                case GOOD_BEAST:
+                case MASTER_SQUIRREL_BOT:
+                    ((Character) iterEntity).nextStep(flattenedBoard());
+                    break;
             }
         }
     }

@@ -1,16 +1,40 @@
 package de.hsa.games.fatsquirrel.core;
 
-import de.hsa.games.fatsquirrel.entities.Entity;
+import de.hsa.games.fatsquirrel.entities.*;
+import de.hsa.games.fatsquirrel.util.XYSupport;
+import javafx.collections.FXCollections;
+import javafx.collections.ListChangeListener;
+import javafx.collections.ObservableList;
+
+import java.util.List;
 
 public class Board {
 
-    private Entity[][] entities;
+    private ObservableList<Entity> entities;
+    private int entityCounter;
     private BoardConfig boardConfig;
-    private FlattenedBoard boardCache;
+    private FlattenedBoard flattenedBoard;
+    private int width, height;
 
-    public Board(BoardConfig config) {
-        this.boardConfig = config;
-        this.entities = new Entity[config.getSize().getX()][config.getSize().getY()];
+    public Board(BoardConfig boardConfig) {
+        this.boardConfig = boardConfig;
+        width = boardConfig.getSize().getX();
+        height = boardConfig.getSize().getY();
+        entities = FXCollections.observableArrayList();
+        entities.addListener(new ListChangeListener<Entity>() {
+            @Override
+            public void onChanged(Change<? extends Entity> c) {
+                while (c.next()) {
+                    if (c.wasAdded())
+                        entityCounter++;
+                    else if (c.wasRemoved())
+                        entityCounter--;
+                }
+            }
+        });
+        flattenedBoard = new FlattenedBoard(this);
+        // Initiialization must be AFTER instantiation of FlattenedBoard
+        initBoard();
     }
 
     public BoardConfig getBoardConfig() {
@@ -21,25 +45,79 @@ public class Board {
         return boardConfig.getSize();
     }
 
-    public FlattenedBoard flatten() {
-        if (boardCache == null)
-            boardCache = new FlattenedBoard(this);
-        return boardCache;
+    public int getWidth() {
+        return width;
+    }
+
+    public int getHeight() {
+        return height;
+    }
+
+    public int getEntityCounter() {
+        return entityCounter;
     }
 
     public void insertEntity(Entity entity) {
-        entities[entity.getPosition().getX()][entity.getPosition().getY()] = entity;
-    }
-
-    public Entity[][] getEntities() {
-        return entities;
-    }
-
-    public Entity getEntity(XY location) {
-        return null;
+        entities.add(entity);
     }
 
     public void deleteEntity(Entity entity) {
-        entities[entity.getPosition().getX()][entity.getPosition().getY()] = null;
+        entities.remove(entity);
+    }
+
+    public List<Entity> getEntities() {
+        return entities;
+    }
+
+    public FlattenedBoard flatten() {
+        return flattenedBoard;
+    }
+
+    public boolean isInBoardRange(XY pos) {
+        int x = pos.getX();
+        int y = pos.getY();
+        return !((x < 0 || x >= getWidth()) ||
+                (y < 0 || y >= getHeight()));
+    }
+
+    public ObservableList<Entity> getObservableList() {
+        return entities;
+    }
+
+    private void initBoard() {
+        XY pos;
+        // Instantiate upper & lower boundary walls
+        for (int x = 0; x < getWidth(); x++) {
+            insertEntity(new Wall(Entity.ID_AUTO_GENERATE, new XY(x, 0)));
+            insertEntity(new Wall(Entity.ID_AUTO_GENERATE, new XY(x, getHeight() - 1)));
+        }
+        // Instantiate upper & lower boundary walls
+        for (int y = 1; y < getHeight(); y++) {
+            insertEntity(new Wall(Entity.ID_AUTO_GENERATE, new XY(0, y)));
+            insertEntity(new Wall(Entity.ID_AUTO_GENERATE, new XY(getWidth() - 1, y)));
+        }
+        // Instantiate random walls
+        for (int i = 0; i < getBoardConfig().getNumberWalls(); i++) {
+            pos = XYSupport.getRandomEmptyPosition(getWidth(), getHeight(), flatten());
+            insertEntity(new Wall(Entity.ID_AUTO_GENERATE, pos));
+        }
+        for (int i = 0; i < getBoardConfig().getNumberGoodBeasts(); i++) {
+            pos = XYSupport.getRandomEmptyPosition(getWidth(), getHeight(), flatten());
+            insertEntity(new GoodBeast(Entity.ID_AUTO_GENERATE, pos));
+        }
+        for (int i = 0; i < getBoardConfig().getNumberGoodPlants(); i++) {
+            pos = XYSupport.getRandomEmptyPosition(getWidth(), getHeight(), flatten());
+            insertEntity(new GoodPlant(Entity.ID_AUTO_GENERATE, pos));
+        }
+        for (int i = 0; i < getBoardConfig().getNumberBadBeasts(); i++) {
+            pos = XYSupport.getRandomEmptyPosition(getWidth(), getHeight(), flatten());
+            insertEntity(new BadBeast(Entity.ID_AUTO_GENERATE, pos));
+        }
+        for (int i = 0; i < getBoardConfig().getNumberBadPlants(); i++) {
+            pos = XYSupport.getRandomEmptyPosition(getWidth(), getHeight(), flatten());
+            insertEntity(new BadPlant(Entity.ID_AUTO_GENERATE, pos));
+        }
+        pos = XYSupport.getRandomEmptyPosition(getWidth(), getHeight(), flatten());
+        insertEntity(new HandOperatedMasterSquirrel(Entity.ID_AUTO_GENERATE, 100, pos));
     }
 }
