@@ -12,11 +12,18 @@ import javafx.stage.Stage;
 import java.util.Timer;
 import java.util.TimerTask;
 
+/**
+ * Application main entry-point which starts the game & ui
+ */
 public class Launcher extends Application {
 
     private final static XY BOARD_SIZE = new XY(40, 40);
     private final static int WALL_COUNT = 10;
 
+    /**
+     * Entry point which starts the game
+     * @param args --gui or --single-thread/--console for the corresponding ui
+     */
     public static void main(String[] args) {
         if (containsArgument(args, "gui") || containsArgument(args, "--gui")) {
             Application.launch(new String[]{args[0]});

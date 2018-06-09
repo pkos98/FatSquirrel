@@ -6,6 +6,9 @@ import javafx.collections.ListChangeListener;
 
 import java.util.logging.Logger;
 
+/**
+ * Manages collisions of all entities and provides 2d-access to the board
+ */
 public class FlattenedBoard implements EntityContext, BoardView {
 
     private final Logger logger = Logger.getLogger(this.getClass().getName());
@@ -13,6 +16,10 @@ public class FlattenedBoard implements EntityContext, BoardView {
     private Entity[][] cells;
     private MasterSquirrel masterSquirrelCache = null;
 
+    /**
+     * Create a new instance of FlattenedBoard
+     * @param board The board which contains all entities
+     */
     public FlattenedBoard(Board board) {
         this.board = board;
         cells = new Entity[board.getWidth()][board.getHeight()];
@@ -54,6 +61,12 @@ public class FlattenedBoard implements EntityContext, BoardView {
         return board.getSize();
     }
 
+    /**
+     * Defines what happens when a MiniSquirrel moves:
+     * Rule...
+     * @param miniSquirrel The minisquirrel which wants to move
+     * @param moveDirection The direction in which the minisquirrel wants to move
+     */
     @Override
     public void tryMove(MiniSquirrel miniSquirrel, XY moveDirection) {
 
@@ -93,6 +106,12 @@ public class FlattenedBoard implements EntityContext, BoardView {
         move(miniSquirrel, nextPosition);
     }
 
+    /**
+     * Defines what happens when a MiniSquirrel moves:
+     * Rule...
+     * @param goodBeast The minisquirrel which wants to move
+     * @param moveDirection The direction in which the minisquirrel wants to move
+     */
     @Override
     public void tryMove(GoodBeast goodBeast, XY moveDirection) {
         XY nextPosition = new XY(goodBeast.getPosition().getX() + moveDirection.getX(),
@@ -115,6 +134,12 @@ public class FlattenedBoard implements EntityContext, BoardView {
         }
     }
 
+    /**
+     * Defines what happens when a MiniSquirrel moves:
+     * Rule...
+     * @param badBeast The minisquirrel which wants to move
+     * @param moveDirection The direction in which the minisquirrel wants to move
+     */
     @Override
     public void tryMove(BadBeast badBeast, XY moveDirection) {
         XY nextPosition = new XY(badBeast.getPosition().getX() + moveDirection.getX(),
@@ -134,6 +159,12 @@ public class FlattenedBoard implements EntityContext, BoardView {
         }
     }
 
+    /**
+     * Defines what happens when a MiniSquirrel moves:
+     * Rule...
+     * @param masterSquirrel The minisquirrel which wants to move
+     * @param moveDirection The direction in which the minisquirrel wants to move
+     */
     @Override
     public void tryMove(MasterSquirrel masterSquirrel, XY moveDirection) {
         XY nextPosition = XYSupport.add(masterSquirrel.getPosition(), moveDirection);
@@ -159,6 +190,11 @@ public class FlattenedBoard implements EntityContext, BoardView {
         move(masterSquirrel, nextPosition);
     }
 
+    /**
+     * Finds the nearest instance of a PlayerEntity
+     * @param pos The position from where the nearest PlayerEntity should be found
+     * @return THe PlayerEntity nearest to the given position
+     */
     @Override
     public PlayerEntity nearestPlayerEntity(XY pos) {
         PlayerEntity nearestEntity = null;
@@ -191,11 +227,18 @@ public class FlattenedBoard implements EntityContext, BoardView {
         return nearestEntity;
     }
 
+    /**
+     * Kills an entity by deleting it from the board
+     * @param entity The entity to delete
+     */
     @Override
     public void kill(Entity entity) {
         board.deleteEntity((entity));
     }
 
+    /**
+     * Kills the entity and respawns an instance of the same EntityType at a random position
+     */
     @Override
     public void killAndReplace(Entity entity) {
         // Reset energy to default level
@@ -204,6 +247,9 @@ public class FlattenedBoard implements EntityContext, BoardView {
         move(entity, randomPos);
     }
 
+    /**
+     * Spawns a mini squirrel
+     */
     @Override
     public void spawnMiniSquirrel() {
         // 1. HAND_OPERATED_MASTER_SQUIRREL finden
