@@ -1,19 +1,27 @@
 package de.hsa.games.fatsquirrel.core;
 
+import java.util.HashMap;
+import java.util.Map;
+
 public class BoardConfig {
 
     private XY size;
     private int wallCount;
-    private int numberWalls, numberGoodBeasts, numberGoodPlants, numberBadPlants, numberBadBeasts;
+    private Map<EntityType, Integer> amountByEntityType;
 
     public BoardConfig(XY size, int wallCount) {
         this.size = size;
         this.wallCount = wallCount;
-        numberWalls = 10;
-        numberBadPlants = 1;
-        numberBadBeasts = 1;
-        numberGoodPlants = 1;
-        numberGoodBeasts = 1;
+        amountByEntityType = new HashMap<>();
+        amountByEntityType.put(EntityType.WALL, 10);
+        amountByEntityType.put(EntityType.BAD_PLANT, 1);
+        amountByEntityType.put(EntityType.BAD_BEAST, 1);
+        amountByEntityType.put(EntityType.GOOD_PLANT, 1);
+        amountByEntityType.put(EntityType.GOOD_BEAST, 1);
+    }
+
+    public Map<EntityType, Integer> getAmountByEntityType() {
+        return amountByEntityType;
     }
 
     public XY getSize() {
@@ -24,23 +32,4 @@ public class BoardConfig {
         return wallCount;
     }
 
-    public int getNumberWalls() {
-        return numberWalls;
-    }
-
-    public int getNumberGoodBeasts() {
-        return numberGoodBeasts;
-    }
-
-    public int getNumberGoodPlants() {
-        return numberGoodPlants;
-    }
-
-    public int getNumberBadPlants() {
-        return numberBadPlants;
-    }
-
-    public int getNumberBadBeasts() {
-        return numberBadBeasts;
-    }
 }
