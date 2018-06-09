@@ -19,6 +19,20 @@ public class FlattenedBoard implements EntityContext, BoardView {
     }
 
     @Override
+    public Entity getEntity(XY xy) {
+        return cells[xy.getX()][xy.getY()];
+    }
+
+    public Entity getEntity(int x, int y) {
+        return getEntity(new XY(x, y));
+    }
+
+    @Override
+    public EntityType getEntityType(XY xy) {
+        return EntityType.fromEntity(getEntity(xy));
+    }
+
+    @Override
     public EntityType getEntityType(int x, int y) {
         return getEntityType(new XY(x, y));
     }
@@ -34,24 +48,35 @@ public class FlattenedBoard implements EntityContext, BoardView {
         XY nextPosition = new XY(miniSquirrel.getPosition().getX() + moveDirection.getX(),
                 miniSquirrel.getPosition().getY() + moveDirection.getY());
         Entity nextEntity = cells[nextPosition.getX()][nextPosition.getY()];
-        if (nextEntity instanceof Wall) {
-            miniSquirrel.updateEnergy(nextEntity.getEnergy());
-            miniSquirrel.paralyze();
-            return;
-        } else if (nextEntity instanceof MiniSquirrel &&
-                miniSquirrel.getPatron() != ((MiniSquirrel) nextEntity).getPatron()) {
-            kill(miniSquirrel);
-        } else if (nextEntity instanceof MasterSquirrel &&
-                miniSquirrel.getPatron() != nextEntity) {
-            kill(miniSquirrel);
-        } else if (nextEntity instanceof GoodPlant ||
-                nextEntity instanceof BadPlant) {
-            miniSquirrel.updateEnergy(nextEntity.getEnergy());
-            killAndReplace(nextEntity);
-        } else if (nextEntity instanceof GoodBeast ||
-                nextEntity instanceof BadBeast) {
-            miniSquirrel.updateEnergy(nextEntity.getEnergy());
-            killAndReplace(nextEntity);
+        EntityType type = EntityType.fromEntity(nextEntity);
+        switch (type) {
+
+            case GOOD_BEAST:
+            case BAD_BEAST:
+                miniSquirrel.updateEnergy(nextEntity.getEnergy());
+                killAndReplace(nextEntity);
+                break;
+            case GOOD_PLANT:
+            case BAD_PLANT:
+                miniSquirrel.updateEnergy(nextEntity.getEnergy());
+                killAndReplace(nextEntity);
+                break;
+            case HAND_OPERATED_MASTER_SQUIRREL:
+            case MASTER_SQUIRREL_BOT:
+                if (!((MasterSquirrel) nextEntity).isPatronOf(miniSquirrel))
+                    kill(miniSquirrel);
+                break;
+            case MINI_SQUIRREL:
+            case MINI_SQUIRREL_BOT:
+                if (miniSquirrel.getPatron() != ((MiniSquirrel) nextEntity).getPatron())
+                    kill(miniSquirrel);
+                break;
+            case WALL:
+                miniSquirrel.updateEnergy(nextEntity.getEnergy());
+                miniSquirrel.paralyze();
+                return;
+            case EMPTY_FIELD:
+                break;
         }
         move(miniSquirrel, nextPosition);
     }
@@ -61,16 +86,19 @@ public class FlattenedBoard implements EntityContext, BoardView {
         XY nextPosition = new XY(goodBeast.getPosition().getX() + moveDirection.getX(),
                 goodBeast.getPosition().getY() + moveDirection.getY());
         Entity nextEntity = cells[nextPosition.getX()][nextPosition.getY()];
-        if (nextEntity instanceof Wall) {
-            move(goodBeast, goodBeast.getPosition());
-        } else if (nextEntity instanceof MiniSquirrel ||
-                nextEntity instanceof MasterSquirrel) {
-            nextEntity.updateEnergy(goodBeast.getEnergy());
-            killAndReplace(goodBeast);
-        } else if (nextEntity == null)
-            move(goodBeast, nextPosition);
-        else
-            return;
+        EntityType type = EntityType.fromEntity(nextEntity);
+        switch (type) {
+            case HAND_OPERATED_MASTER_SQUIRREL:
+            case MASTER_SQUIRREL_BOT:
+            case MINI_SQUIRREL:
+            case MINI_SQUIRREL_BOT:
+                // TODO: GoodBeast <-> BadBeast || (Bad|Good)Plant
+                nextEntity.updateEnergy(goodBeast.getEnergy());
+                killAndReplace(goodBeast);
+                break;
+            case EMPTY_FIELD:
+                move(goodBeast, nextPosition);
+        }
     }
 
     @Override
@@ -78,15 +106,18 @@ public class FlattenedBoard implements EntityContext, BoardView {
         XY nextPosition = new XY(badBeast.getPosition().getX() + moveDirection.getX(),
                 badBeast.getPosition().getY() + moveDirection.getY());
         Entity nextEntity = cells[nextPosition.getX()][nextPosition.getY()];
-        if (nextEntity instanceof Wall)
-            return;
-        else if (nextEntity instanceof MiniSquirrel || nextEntity instanceof MasterSquirrel) {
-            nextEntity.updateEnergy(badBeast.getEnergy());
-            killAndReplace(badBeast);
-        } else if (nextEntity == null)
-            move(badBeast, nextPosition);
-        else
-            return;
+        EntityType type = EntityType.fromEntity(nextEntity);
+        switch (type) {
+            case MINI_SQUIRREL:
+            case MINI_SQUIRREL_BOT:
+            case HAND_OPERATED_MASTER_SQUIRREL:
+            case MASTER_SQUIRREL_BOT:
+                nextEntity.updateEnergy(badBeast.getEnergy());
+                killAndReplace(badBeast);
+                break;
+            case EMPTY_FIELD:
+                move(badBeast, nextPosition);
+        }
     }
 
     @Override
@@ -98,15 +129,20 @@ public class FlattenedBoard implements EntityContext, BoardView {
             return;
 
         Entity nextEntity = cells[nextPosition.getX()][nextPosition.getY()];
-        if (nextEntity instanceof Wall) {
-            masterSquirrel.updateEnergy(nextEntity.getEnergy());
-            masterSquirrel.paralyze();
-            return;
-        } else if (nextEntity instanceof MasterSquirrel) {
-            return;
-        } else if (nextEntity != null) {
-            masterSquirrel.updateEnergy(nextEntity.getEnergy());
-            killAndReplace(nextEntity);
+        EntityType type = EntityType.fromEntity(nextEntity);
+        switch (type) {
+            case WALL:
+                masterSquirrel.updateEnergy(nextEntity.getEnergy());
+                masterSquirrel.paralyze();
+                return;
+            case MASTER_SQUIRREL_BOT:
+            case HAND_OPERATED_MASTER_SQUIRREL:
+                return;
+            case EMPTY_FIELD:
+                break;
+            default:
+                masterSquirrel.updateEnergy(nextEntity.getEnergy());
+                killAndReplace(nextEntity);
         }
         move(masterSquirrel, nextPosition);
     }
@@ -117,10 +153,13 @@ public class FlattenedBoard implements EntityContext, BoardView {
         XY nearestEntityDistance = null;
         for (int x = 0; x < board.getSize().getX(); x++) {
             for (int y = 0; y < board.getSize().getY(); y++) {
-                Entity currentCell = cells[x][y];
-                if (!(currentCell instanceof PlayerEntity))
-                    continue;
-
+                Entity currentCell = getEntity(x, y);
+                EntityType type = EntityType.fromEntity(currentCell);
+                switch (type) {
+                    case HAND_OPERATED_MASTER_SQUIRREL:
+                    case MASTER_SQUIRREL_BOT:
+                        continue;
+                }
                 if (nearestEntity == null) {
                     nearestEntity = (PlayerEntity) currentCell;
                     nearestEntityDistance = pos.distanceFromXY(nearestEntity.getPosition());
@@ -154,11 +193,6 @@ public class FlattenedBoard implements EntityContext, BoardView {
     }
 
     @Override
-    public EntityType getEntityType(XY xy) {
-        return EntityType.fromEntity(cells[xy.getX()][xy.getY()]);
-    }
-
-    @Override
     public void spawnMiniSquirrel() {
         // 1. HAND_OPERATED_MASTER_SQUIRREL finden
         logger.info("MINI_SQUIRREL spawned");
@@ -173,48 +207,57 @@ public class FlattenedBoard implements EntityContext, BoardView {
     public void implode(MiniSquirrel miniSquirrel, int impactRadius) {
         XY location = miniSquirrel.getPosition();
         for (int iterX = location.getX() - impactRadius; iterX <= location.getX() + impactRadius; iterX++) {
+            innerLoop:
             for (int iterY = location.getX() - impactRadius; iterY <= location.getX() + impactRadius; iterY++) {
-                Entity entity = this.board.getEntity(new XY(iterX, iterX));
+                Entity entity = board.getEntity(new XY(iterX, iterX));
+                EntityType type = EntityType.fromEntity(entity);
                 XY XYdistance = new XY(iterX, iterX);
                 double distance = XYdistance.convertDistance(XYdistance.distanceFromXY(entity.getPosition()));
                 double impactArea = impactRadius * impactRadius * Math.PI;
                 double energyLoss = 200 * (miniSquirrel.getEnergy() / impactArea) * (1 - distance / impactRadius);
 
-                if (entity instanceof MiniSquirrel) {
-                    if (((MiniSquirrel) entity).getPatron() == miniSquirrel.getPatron())
+                switch (type) {
+                    case MINI_SQUIRREL:
+                    case MINI_SQUIRREL_BOT:
+                        if (((MiniSquirrel) entity).getPatron() == miniSquirrel.getPatron())
+                            break innerLoop;
+                        else {
+                            entity.updateEnergy(-(int) energyLoss);
+                            miniSquirrel.getPatron().updateEnergy((int) energyLoss);
+                            if (entity.getEnergy() <= 0)
+                                killAndReplace(entity);
+                        }
                         break;
-                    else {
+                    case HAND_OPERATED_MASTER_SQUIRREL:
+                    case MASTER_SQUIRREL_BOT:
+                        if (entity == miniSquirrel.getPatron())
+                            break;
+                        else {
+                            if ((int) energyLoss > entity.getEnergy())
+                                entity.updateEnergy(-entity.getEnergy());
+                            else {
+                                entity.updateEnergy(-(int) energyLoss);
+                                miniSquirrel.getPatron().updateEnergy((int) energyLoss);
+                            }
+                        }
+                        break;
+                    case GOOD_BEAST:
+                    case GOOD_PLANT:
                         entity.updateEnergy(-(int) energyLoss);
                         miniSquirrel.getPatron().updateEnergy((int) energyLoss);
                         if (entity.getEnergy() <= 0)
                             killAndReplace(entity);
-                    }
-                }
-
-                if (entity instanceof MasterSquirrel) {
-                    if (entity == miniSquirrel.getPatron())
                         break;
-                    else {
-                        if ((int) energyLoss > entity.getEnergy())
-                            entity.updateEnergy(-entity.getEnergy());
-                        else {
-                            entity.updateEnergy(-(int) energyLoss);
-                            miniSquirrel.getPatron().updateEnergy((int) energyLoss);
-                        }
-                    }
-                } else if (entity instanceof GoodBeast || entity instanceof GoodPlant) {
-                    entity.updateEnergy(-(int) energyLoss);
-                    miniSquirrel.getPatron().updateEnergy((int) energyLoss);
-                    if (entity.getEnergy() <= 0)
-                        killAndReplace(entity);
-
-                } else if (entity instanceof BadPlant || entity instanceof BadBeast) {
-                    entity.updateEnergy(-(int) energyLoss);
-                    if (entity.getEnergy() <= 0)
-                        killAndReplace(entity);
+                    case BAD_BEAST:
+                    case BAD_PLANT:
+                        entity.updateEnergy(-(int) energyLoss);
+                        if (entity.getEnergy() <= 0)
+                            killAndReplace(entity);
+                        break;
                 }
             }
         }
+
     }
 
     private void createEntities() {
@@ -246,7 +289,7 @@ public class FlattenedBoard implements EntityContext, BoardView {
             cells[pos.getX()][pos.getY()] = new BadPlant(Entity.ID_AUTO_GENERATE, pos);
         }
         XY pos = XYSupport.getRandomEmptyPosition(width, height, this);
-        cells[pos.getX()][pos.getY()] = new MasterSquirrelBot(Entity.ID_AUTO_GENERATE, 100, pos);
+        cells[pos.getX()][pos.getY()] = new HandOperatedMasterSquirrel(Entity.ID_AUTO_GENERATE, 100, pos);
     }
 
     private MasterSquirrel findMasterSquirrel() {
@@ -254,8 +297,9 @@ public class FlattenedBoard implements EntityContext, BoardView {
             return masterSquirrelCache;
         for (int x = 0; x < board.getSize().getX(); x++) {
             for (int y = 0; y < board.getSize().getY(); y++) {
-                Entity iterCell = cells[x][y];
-                if (!(iterCell instanceof MasterSquirrel))
+                Entity iterCell = getEntity(x, y);
+                EntityType type = EntityType.fromEntity(iterCell);
+                if (!((type != EntityType.MASTER_SQUIRREL_BOT) || type != EntityType.HAND_OPERATED_MASTER_SQUIRREL))
                     continue;
                 masterSquirrelCache = (MasterSquirrel) iterCell;
             }
@@ -267,10 +311,6 @@ public class FlattenedBoard implements EntityContext, BoardView {
         cells[entity.getPosition().getX()][entity.getPosition().getY()] = null;
         cells[newPos.getX()][newPos.getY()] = entity;
         entity.setPosition(newPos);
-    }
-
-    public Entity getEntity(XY xy) {
-        return cells[xy.getX()][xy.getY()];
     }
 
     public XY getAwayfromPosition(Entity entity, XY position) {
