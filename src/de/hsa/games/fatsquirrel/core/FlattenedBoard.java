@@ -19,8 +19,22 @@ public class FlattenedBoard implements EntityContext, BoardView {
     }
 
     @Override
+    public Entity getEntity(XY xy) {
+        return cells[xy.getX()][xy.getY()];
+    }
+
+    public Entity getEntity(int x, int y) {
+        return getEntity(new XY(x, y));
+    }
+
+    @Override
+    public EntityType getEntityType(XY xy) {
+        return EntityType.fromEntity(getEntity(xy));
+    }
+
+    @Override
     public EntityType getEntityType(int x, int y) {
-        return getEntityType(new XY(x, y));
+        return getEntityType(x, y);
     }
 
     @Override
@@ -139,16 +153,13 @@ public class FlattenedBoard implements EntityContext, BoardView {
         XY nearestEntityDistance = null;
         for (int x = 0; x < board.getSize().getX(); x++) {
             for (int y = 0; y < board.getSize().getY(); y++) {
-                Entity currentCell = cells[x][y];
+                Entity currentCell = getEntity(x, y);
                 EntityType type = EntityType.fromEntity(currentCell);
                 switch (type) {
                     case HAND_OPERATED_MASTER_SQUIRREL:
                     case MASTER_SQUIRREL_BOT:
                         continue;
                 }
-                if (!(currentCell instanceof PlayerEntity))
-                    continue;
-
                 if (nearestEntity == null) {
                     nearestEntity = (PlayerEntity) currentCell;
                     nearestEntityDistance = pos.distanceFromXY(nearestEntity.getPosition());
@@ -182,11 +193,6 @@ public class FlattenedBoard implements EntityContext, BoardView {
     }
 
     @Override
-    public EntityType getEntityType(XY xy) {
-        return EntityType.fromEntity(getEntity(xy));
-    }
-
-    @Override
     public void spawnMiniSquirrel() {
         // 1. HAND_OPERATED_MASTER_SQUIRREL finden
         logger.info("MINI_SQUIRREL spawned");
@@ -203,7 +209,7 @@ public class FlattenedBoard implements EntityContext, BoardView {
         for (int iterX = location.getX() - impactRadius; iterX <= location.getX() + impactRadius; iterX++) {
             innerLoop:
             for (int iterY = location.getX() - impactRadius; iterY <= location.getX() + impactRadius; iterY++) {
-                Entity entity = this.board.getEntity(new XY(iterX, iterX));
+                Entity entity = board.getEntity(new XY(iterX, iterX));
                 EntityType type = EntityType.fromEntity(entity);
                 XY XYdistance = new XY(iterX, iterX);
                 double distance = XYdistance.convertDistance(XYdistance.distanceFromXY(entity.getPosition()));
@@ -291,7 +297,7 @@ public class FlattenedBoard implements EntityContext, BoardView {
             return masterSquirrelCache;
         for (int x = 0; x < board.getSize().getX(); x++) {
             for (int y = 0; y < board.getSize().getY(); y++) {
-                Entity iterCell = cells[x][y];
+                Entity iterCell = getEntity(x, y);
                 EntityType type = EntityType.fromEntity(iterCell);
                 if (!((type != EntityType.MASTER_SQUIRREL_BOT) || type != EntityType.HAND_OPERATED_MASTER_SQUIRREL))
                     continue;
@@ -305,10 +311,6 @@ public class FlattenedBoard implements EntityContext, BoardView {
         cells[entity.getPosition().getX()][entity.getPosition().getY()] = null;
         cells[newPos.getX()][newPos.getY()] = entity;
         entity.setPosition(newPos);
-    }
-
-    public Entity getEntity(XY xy) {
-        return cells[xy.getX()][xy.getY()];
     }
 
     public XY getAwayfromPosition(Entity entity, XY position) {
