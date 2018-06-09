@@ -2,6 +2,7 @@ package de.hsa.games.fatsquirrel.core;
 
 import de.hsa.games.fatsquirrel.entities.*;
 import de.hsa.games.fatsquirrel.util.XYSupport;
+import javafx.collections.ListChangeListener;
 
 import java.util.logging.Logger;
 
@@ -15,6 +16,18 @@ public class FlattenedBoard implements EntityContext, BoardView {
     public FlattenedBoard(Board board) {
         this.board = board;
         cells = new Entity[board.getWidth()][board.getHeight()];
+        board.getObservableList().addListener(new ListChangeListener<Entity>() {
+            @Override
+            public void onChanged(Change<? extends Entity> c) {
+                while (c.next()) {
+                    Entity iterEntity = c.getList().get(c.getFrom());
+                    if (c.wasAdded())
+                        setCell(iterEntity, iterEntity.getPosition());
+                    else if (c.wasRemoved())
+                        setCell(null, iterEntity.getPosition());
+                }
+            }
+        });
     }
 
     @Override
@@ -84,6 +97,8 @@ public class FlattenedBoard implements EntityContext, BoardView {
     public void tryMove(GoodBeast goodBeast, XY moveDirection) {
         XY nextPosition = new XY(goodBeast.getPosition().getX() + moveDirection.getX(),
                 goodBeast.getPosition().getY() + moveDirection.getY());
+        if (!board.isInBoardRange(nextPosition))
+            return;
         Entity nextEntity = getEntity(nextPosition.getX(), nextPosition.getY());
         EntityType type = EntityType.fromEntity(nextEntity);
         switch (type) {
@@ -257,27 +272,6 @@ public class FlattenedBoard implements EntityContext, BoardView {
 
     }
 
-    private MasterSquirrel findMasterSquirrel() {
-        if (masterSquirrelCache != null)
-            return masterSquirrelCache;
-        for (int x = 0; x < board.getSize().getX(); x++) {
-            for (int y = 0; y < board.getSize().getY(); y++) {
-                Entity iterCell = getEntity(x, y);
-                EntityType type = EntityType.fromEntity(iterCell);
-                if (!((type != EntityType.MASTER_SQUIRREL_BOT) || type != EntityType.HAND_OPERATED_MASTER_SQUIRREL))
-                    continue;
-                masterSquirrelCache = (MasterSquirrel) iterCell;
-            }
-        }
-        return findMasterSquirrel();
-    }
-
-    private void move(Entity entity, XY newPos) {
-        cells[entity.getPosition().getX()][entity.getPosition().getY()] = null;
-        cells[newPos.getX()][newPos.getY()] = entity;
-        entity.setPosition(newPos);
-    }
-
     public XY getAwayfromPosition(Entity entity, XY position) {
         int toMoveX, toMoveY;
         if (entity.getPosition().getY() - position.getY() <= 0)
@@ -309,5 +303,39 @@ public class FlattenedBoard implements EntityContext, BoardView {
             toMoveX = 0;
         return new XY(toMoveX, toMoveY);
     }
+
+    private MasterSquirrel findMasterSquirrel() {
+        if (masterSquirrelCache != null)
+            return masterSquirrelCache;
+        for (int x = 0; x < board.getSize().getX(); x++) {
+            for (int y = 0; y < board.getSize().getY(); y++) {
+                Entity iterCell = getEntity(x, y);
+                EntityType type = EntityType.fromEntity(iterCell);
+                if (!((type != EntityType.MASTER_SQUIRREL_BOT) || type != EntityType.HAND_OPERATED_MASTER_SQUIRREL))
+                    continue;
+                masterSquirrelCache = (MasterSquirrel) iterCell;
+            }
+        }
+        return findMasterSquirrel();
+    }
+
+    private void move(Entity entity, XY newPos) {
+        cells[entity.getPosition().getX()][entity.getPosition().getY()] = null;
+        cells[newPos.getX()][newPos.getY()] = entity;
+        entity.setPosition(newPos);
+    }
+
+    private void setCell(Entity entity, XY pos) {
+        cells[pos.getX()][pos.getY()] = entity;
+    }
+
+    private void updateCells() {
+        cells = new Entity[board.getWidth()][board.getHeight()];
+        for (int i = 0; i < board.getEntities().size(); i++) {
+            Entity iterEntity = board.getEntities().get(i);
+            cells[iterEntity.getPosition().getX()][iterEntity.getPosition().getY()] = iterEntity;
+        }
+    }
+
 
 }
