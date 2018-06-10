@@ -62,22 +62,43 @@ public class Board {
         return entityCounter;
     }
 
+    /**
+     * Insert an entity into the board using its position property
+     * @param entity The entity to insert
+     */
     public void insertEntity(Entity entity) {
         entities.add(entity);
     }
 
+    /**
+     * Delete the entity from the board
+     * @param entity The entity to delete
+     */
     public void deleteEntity(Entity entity) {
         entities.remove(entity);
     }
 
+    /**
+     * Get all entities of the board
+     * @return A list of all entities
+     */
     public List<Entity> getEntities() {
         return entities;
     }
 
+    /**
+     * Get a 2d-representation of the board
+     * @return The 2d-representation of the board
+     */
     public FlattenedBoard flatten() {
         return flattenedBoard;
     }
 
+    /**
+     * Proves if the given position is within the board range
+     * @param pos The position to prove
+     * @return true if the position is in the board, else false
+     */
     public boolean isInBoardRange(XY pos) {
         int x = pos.getX();
         int y = pos.getY();
@@ -85,10 +106,17 @@ public class Board {
                 (y < 0 || y >= getHeight()));
     }
 
+    /**
+     * Get an observable list of all entities
+     * @return An observable list of all entities
+     */
     public ObservableList<Entity> getObservableList() {
         return entities;
     }
 
+    /**
+     * Initialize the board with the amount of entities defined in BoardConfig
+     */
     private void initBoard() {
         Map<EntityType, Integer> map = getBoardConfig().getAmountByEntityType();
         XY pos;

@@ -2,6 +2,9 @@ package de.hsa.games.fatsquirrel.core;
 
 import de.hsa.games.fatsquirrel.entities.*;
 
+/**
+ * Interface defining the context of all entities
+ */
 public interface EntityContext {
 
     XY getSize();
