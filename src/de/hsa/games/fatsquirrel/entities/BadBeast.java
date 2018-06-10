@@ -31,11 +31,9 @@ public class BadBeast extends Character {
 
     @Override
     public XY nextStep(EntityContext context) {
-        if (nextStepCounter % 4 != 0) {
-            nextStepCounter++;
+        if (++nextStepCounter % 4 != 0) {
             return getPosition();
         } else {
-            nextStepCounter++;
             context.tryMove(this, XYSupport.getRandomMoveVector());
             return getPosition();//botApi(this, context);
         }
