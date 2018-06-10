@@ -152,7 +152,9 @@ public class FlattenedBoard implements EntityContext, BoardView {
             case HAND_OPERATED_MASTER_SQUIRREL:
             case MASTER_SQUIRREL_BOT:
                 nextEntity.updateEnergy(badBeast.getEnergy());
-                killAndReplace(badBeast);
+                badBeast.bite();
+                if (badBeast.getBiteCounter() == BadBeast.MAX_BITES)
+                    killAndReplace(badBeast);
                 break;
             case EMPTY_FIELD:
                 move(badBeast, nextPosition);

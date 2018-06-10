@@ -7,11 +7,10 @@ import de.hsa.games.fatsquirrel.util.XYSupport;
 public class BadBeast extends Character {
 
     private static final int START_ENERGY = -150;
-    //Board board;
-    //private BoardConfig config;
     private final int viewDistance = 6;
     private int biteCounter = 0;
     private int nextStepCounter = 0;
+    public static final int MAX_BITES = 6;
 
     public BadBeast(int id, XY startPos) {
         super(id, START_ENERGY, startPos);
@@ -26,11 +25,8 @@ public class BadBeast extends Character {
         return biteCounter;
     }
 
-    public boolean bite() {
-        if (biteCounter == 6)
-            return false;
+    public void bite() {
         biteCounter++;
-        return true;
     }
 
     @Override
