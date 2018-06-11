@@ -6,6 +6,8 @@ import de.hsa.games.fatsquirrel.core.XY;
 import de.hsa.games.fatsquirrel.ui.console.ConsoleUI;
 import de.hsa.games.fatsquirrel.ui.console.GameImpl;
 import de.hsa.games.fatsquirrel.ui.fxui.FxUI;
+import de.hsa.games.fatsquirrel.util.BoardConfigProvider;
+import de.hsa.games.fatsquirrel.util.PropertyBoardConfigProvider;
 import javafx.application.Application;
 import javafx.stage.Stage;
 
@@ -19,6 +21,8 @@ public class Launcher extends Application {
 
     private final static XY BOARD_SIZE = new XY(40, 40);
     private final static int WALL_COUNT = 10;
+    private static BoardConfigProvider propertyConfigProvider =
+            new PropertyBoardConfigProvider("properties/default.properties");
 
     /**
      * Entry point which starts the game
@@ -29,7 +33,8 @@ public class Launcher extends Application {
             Application.launch(new String[]{args[0]});
             return;
         }
-        Game game = new GameImpl(new State(new Board(new BoardConfig(BOARD_SIZE, WALL_COUNT))), new ConsoleUI());
+        BoardConfigProvider configProvider = new PropertyBoardConfigProvider("properties/default.properties");
+        Game game = new GameImpl(new State(new Board(new BoardConfig(configProvider))), new ConsoleUI());
         if (containsArgument(args, "single-thread") || containsArgument(args, "--single-thread"))
             startGameSingleThreaded(game);
         else
@@ -66,7 +71,7 @@ public class Launcher extends Application {
         primaryStage.setScene(fxUI);
         primaryStage.setOnCloseRequest(x -> System.exit(-1));
         primaryStage.show();
-        Game game = new GameImpl(new State(new Board(new BoardConfig(BOARD_SIZE, WALL_COUNT))), fxUI);
+        Game game = new GameImpl(new State(new Board(new BoardConfig(propertyConfigProvider))), fxUI);
         startGameMultiThreaded(game);
     }
 
