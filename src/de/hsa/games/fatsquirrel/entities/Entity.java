@@ -11,6 +11,7 @@ public abstract class Entity {
     private XY position;
     private int id;
     private int energy;
+    private String name;
     private Logger logger = Logger.getLogger(this.getClass().getName());
 
     public Entity(int id, int startEnergy, XY startPos) {
@@ -42,6 +43,10 @@ public abstract class Entity {
 
     public void updateEnergy(int delta) { //TODO think about Energy<0 in nextStep or new method
         energy += delta;
+    }
+
+    public String getName(){
+        return name;
     }
 
     @Override

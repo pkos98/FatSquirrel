@@ -1,5 +1,11 @@
 package de.hsa.games.fatsquirrel.core;
 
+import de.hsa.games.fatsquirrel.botapi.BotController;
+import de.hsa.games.fatsquirrel.entities.Entity;
+import de.hsa.games.fatsquirrel.entities.MasterSquirrel;
+import de.hsa.games.fatsquirrel.entities.MasterSquirrelBot;
+import de.hsa.games.fatsquirrel.entities.MiniSquirrelBot;
+
 import java.util.HashMap;
 import java.util.Map;
 
@@ -11,10 +17,11 @@ public class BoardConfig {
     private XY size;
     private int wallCount;
     private Map<EntityType, Integer> amountByEntityType;
-
+    private int stepCounter = 50;
     /**
      * Create a new BoardConfig instance
-     * @param size The board`s size where x=width and y=height
+     *
+     * @param size      The board`s size where x=width and y=height
      * @param wallCount The amount of randomly distributed Walls
      */
     public BoardConfig(XY size, int wallCount) {
@@ -31,6 +38,8 @@ public class BoardConfig {
     /**
      * Get a Map containing the amount of entities to spawn by its EntityType
      */
+
+
     public Map<EntityType, Integer> getAmountByEntityType() {
         return amountByEntityType;
     }
@@ -43,4 +52,7 @@ public class BoardConfig {
         return wallCount;
     }
 
+    public int getStepCounter() {
+        return stepCounter;
+    }
 }

@@ -1,8 +1,6 @@
 package de.hsa.games.fatsquirrel.core;
 
-import de.hsa.games.fatsquirrel.entities.Entity;
-import de.hsa.games.fatsquirrel.entities.HandOperatedMasterSquirrel;
-import de.hsa.games.fatsquirrel.entities.Wall;
+import de.hsa.games.fatsquirrel.entities.*;
 import de.hsa.games.fatsquirrel.util.EntityAnnotation;
 import de.hsa.games.fatsquirrel.util.XYSupport;
 import javafx.collections.FXCollections;
@@ -10,12 +8,14 @@ import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 
 import java.lang.reflect.Field;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
 public class Board {
 
     private ObservableList<Entity> entities;
+    private ArrayList<Entity> masterSquirrels;
     private int entityCounter;
     private BoardConfig boardConfig;
     private FlattenedBoard flattenedBoard;
@@ -26,6 +26,7 @@ public class Board {
         width = boardConfig.getSize().getX();
         height = boardConfig.getSize().getY();
         entities = FXCollections.observableArrayList();
+        masterSquirrels = new ArrayList<>();
         entities.addListener(new ListChangeListener<Entity>() {
             @Override
             public void onChanged(Change<? extends Entity> c) {
@@ -64,6 +65,7 @@ public class Board {
 
     /**
      * Insert an entity into the board using its position property
+     *
      * @param entity The entity to insert
      */
     public void insertEntity(Entity entity) {
@@ -72,6 +74,7 @@ public class Board {
 
     /**
      * Delete the entity from the board
+     *
      * @param entity The entity to delete
      */
     public void deleteEntity(Entity entity) {
@@ -80,6 +83,7 @@ public class Board {
 
     /**
      * Get all entities of the board
+     *
      * @return A list of all entities
      */
     public List<Entity> getEntities() {
@@ -88,6 +92,7 @@ public class Board {
 
     /**
      * Get a 2d-representation of the board
+     *
      * @return The 2d-representation of the board
      */
     public FlattenedBoard flatten() {
@@ -96,6 +101,7 @@ public class Board {
 
     /**
      * Proves if the given position is within the board range
+     *
      * @param pos The position to prove
      * @return true if the position is in the board, else false
      */
@@ -108,6 +114,7 @@ public class Board {
 
     /**
      * Get an observable list of all entities
+     *
      * @return An observable list of all entities
      */
     public ObservableList<Entity> getObservableList() {
@@ -153,5 +160,16 @@ public class Board {
             e.printStackTrace();
         }
         return null;
+    }
+
+    public ArrayList<Entity> getMasters() {
+        for (int iterX = 0; iterX < width; iterX++) {
+            for (int itery = 0; itery < height; itery++) {
+                Entity entity = flattenedBoard.getEntity(iterX, itery);
+                if (entity instanceof MasterSquirrel)
+                    masterSquirrels.add(entity);
+            }
+        }
+        return masterSquirrels;
     }
 }

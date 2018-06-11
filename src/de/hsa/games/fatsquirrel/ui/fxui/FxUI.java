@@ -6,6 +6,8 @@ import de.hsa.games.fatsquirrel.core.EntityType;
 import de.hsa.games.fatsquirrel.core.XY;
 import de.hsa.games.fatsquirrel.ui.console.GameCommandType;
 import javafx.application.Platform;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
@@ -148,4 +150,6 @@ public class FxUI extends Scene implements de.hsa.games.fatsquirrel.UI {
                 setCommand(null);
         }
     }
+
+
 }

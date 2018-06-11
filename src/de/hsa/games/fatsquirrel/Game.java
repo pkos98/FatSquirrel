@@ -5,6 +5,7 @@ public abstract class Game {
     final int FPS = 10;
     protected UI ui;
     protected State state;
+    public boolean thread = true;
 
     public Game(State state, UI ui) {
         this.state = state;
@@ -12,11 +13,9 @@ public abstract class Game {
     }
 
     public void run() {
-        while (true) {
-            render();
-            processInput();
-            update();
-        }
+        render();
+        processInput();
+        update();
     }
 
     public void runMultiThreaded() {
@@ -35,5 +34,9 @@ public abstract class Game {
 
     public int getFPS() {
         return FPS;
+    }
+
+    public void setThread(boolean thread) {
+        this.thread = thread;
     }
 }
