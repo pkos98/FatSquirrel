@@ -76,6 +76,8 @@ public class FlattenedBoard implements EntityContext, BoardView {
 
         XY nextPosition = new XY(miniSquirrel.getPosition().getX() + moveDirection.getX(),
                 miniSquirrel.getPosition().getY() + moveDirection.getY());
+        if (!board.isInBoardRange(nextPosition))
+            return;
         Entity nextEntity = getEntity(nextPosition.getX(), nextPosition.getY());
         EntityType type = EntityType.fromEntity(nextEntity);
         switch (type) {
@@ -147,6 +149,8 @@ public class FlattenedBoard implements EntityContext, BoardView {
     public void tryMove(BadBeast badBeast, XY moveDirection) {
         XY nextPosition = new XY(badBeast.getPosition().getX() + moveDirection.getX(),
                 badBeast.getPosition().getY() + moveDirection.getY());
+        if (!board.isInBoardRange(nextPosition))
+            return;
         Entity nextEntity = getEntity(nextPosition.getX(), nextPosition.getY());
         EntityType type = EntityType.fromEntity(nextEntity);
         switch (type) {

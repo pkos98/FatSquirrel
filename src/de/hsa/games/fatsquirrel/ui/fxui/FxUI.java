@@ -6,8 +6,6 @@ import de.hsa.games.fatsquirrel.core.EntityType;
 import de.hsa.games.fatsquirrel.core.XY;
 import de.hsa.games.fatsquirrel.ui.console.GameCommandType;
 import javafx.application.Platform;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
@@ -99,6 +97,10 @@ public class FxUI extends Scene implements de.hsa.games.fatsquirrel.UI {
                 gc.setFill(Color.GOLD);
                 gc.fillOval(xPos, yPos, CELL_SIZE, CELL_SIZE);
                 break;
+            case MINI_SQUIRREL:
+            case MINI_SQUIRREL_BOT:
+                gc.setFill(Color.BLUE);
+                gc.fillOval(xPos, yPos, CELL_SIZE, CELL_SIZE);
             case EMPTY_FIELD:
                 gc.setFill(Color.WHITE);
                 gc.fillRect(xPos, yPos, CELL_SIZE, CELL_SIZE);
