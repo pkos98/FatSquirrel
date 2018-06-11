@@ -14,7 +14,6 @@ import static de.hsa.games.fatsquirrel.botimpl.BotHelper.checkSpawnField;
 public class MasterSquirrelBotController implements BotController {
     private final static Logger logger = Logger.getLogger(Launcher.class.getName());
     private final BotHelper botHelper;
-
     private int energyToReachForSpawn = 400;
 
     public MasterSquirrelBotController(BotHelper botHelper) {

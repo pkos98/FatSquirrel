@@ -1,17 +1,17 @@
-package de.hsa.games.fatsquirrel.botimpl;
+package de.hsa.games.fatsquirrel.botimpl.packersbier;
 
 import de.hsa.games.fatsquirrel.botapi.BotController;
 import de.hsa.games.fatsquirrel.botapi.BotControllerFactory;
 
-public class BotControllerFactoryImpl implements BotControllerFactory {
+public class packersbierFactory implements BotControllerFactory {
 
     @Override
     public BotController createMasterBotController() {
-        return new MasterSquirrelBotController(new BotHelper());
+        return null;
     }
 
     @Override
     public BotController createMiniBotController() {
-        return new MiniSquirrelBotController(new BotHelper());
+        return null;
     }
 }
