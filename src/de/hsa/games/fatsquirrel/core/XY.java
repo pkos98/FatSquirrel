@@ -1,5 +1,6 @@
 package de.hsa.games.fatsquirrel.core;
 
+import java.util.Objects;
 import java.util.Random;
 
 public final class XY {
@@ -64,5 +65,10 @@ public final class XY {
             return true;
         XY xy = (XY) obj;
         return getX() == xy.getX() && getY() == xy.getY();
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(x, y);
     }
 }

@@ -18,6 +18,7 @@ public class FlattenedBoard implements EntityContext, BoardView {
 
     /**
      * Create a new instance of FlattenedBoard
+     *
      * @param board The board which contains all entities
      */
     public FlattenedBoard(Board board) {
@@ -27,11 +28,13 @@ public class FlattenedBoard implements EntityContext, BoardView {
             @Override
             public void onChanged(Change<? extends Entity> c) {
                 while (c.next()) {
-                    Entity iterEntity = c.getList().get(c.getFrom());
-                    if (c.wasAdded())
+                    if (c.wasAdded()) {
+                        Entity iterEntity = c.getList().get(c.getFrom());
                         setCell(iterEntity, iterEntity.getPosition());
-                    else if (c.wasRemoved())
+                    } else if (c.wasRemoved()) {
+                        Entity iterEntity = c.getRemoved().get(0);
                         setCell(null, iterEntity.getPosition());
+                    }
                 }
             }
         });
@@ -64,7 +67,8 @@ public class FlattenedBoard implements EntityContext, BoardView {
     /**
      * Defines what happens when a MiniSquirrel moves:
      * Rule...
-     * @param miniSquirrel The minisquirrel which wants to move
+     *
+     * @param miniSquirrel  The minisquirrel which wants to move
      * @param moveDirection The direction in which the minisquirrel wants to move
      */
     @Override
@@ -78,13 +82,11 @@ public class FlattenedBoard implements EntityContext, BoardView {
 
             case GOOD_BEAST:
             case BAD_BEAST:
-                miniSquirrel.updateEnergy(nextEntity.getEnergy());
-                killAndReplace(nextEntity);
-                break;
             case GOOD_PLANT:
             case BAD_PLANT:
                 miniSquirrel.updateEnergy(nextEntity.getEnergy());
                 killAndReplace(nextEntity);
+                move(miniSquirrel, nextPosition);
                 break;
             case HAND_OPERATED_MASTER_SQUIRREL:
             case MASTER_SQUIRREL_BOT:
@@ -99,17 +101,17 @@ public class FlattenedBoard implements EntityContext, BoardView {
             case WALL:
                 miniSquirrel.updateEnergy(nextEntity.getEnergy());
                 miniSquirrel.paralyze();
-                return;
-            case EMPTY_FIELD:
                 break;
+            case EMPTY_FIELD:
+                move(miniSquirrel, nextPosition);
         }
-        move(miniSquirrel, nextPosition);
     }
 
     /**
      * Defines what happens when a MiniSquirrel moves:
      * Rule...
-     * @param goodBeast The minisquirrel which wants to move
+     *
+     * @param goodBeast     The minisquirrel which wants to move
      * @param moveDirection The direction in which the minisquirrel wants to move
      */
     @Override
@@ -137,7 +139,8 @@ public class FlattenedBoard implements EntityContext, BoardView {
     /**
      * Defines what happens when a MiniSquirrel moves:
      * Rule...
-     * @param badBeast The minisquirrel which wants to move
+     *
+     * @param badBeast      The minisquirrel which wants to move
      * @param moveDirection The direction in which the minisquirrel wants to move
      */
     @Override
@@ -152,7 +155,9 @@ public class FlattenedBoard implements EntityContext, BoardView {
             case HAND_OPERATED_MASTER_SQUIRREL:
             case MASTER_SQUIRREL_BOT:
                 nextEntity.updateEnergy(badBeast.getEnergy());
-                killAndReplace(badBeast);
+                badBeast.bite();
+                if (badBeast.getBiteCounter() == BadBeast.MAX_BITES)
+                    killAndReplace(badBeast);
                 break;
             case EMPTY_FIELD:
                 move(badBeast, nextPosition);
@@ -162,8 +167,9 @@ public class FlattenedBoard implements EntityContext, BoardView {
     /**
      * Defines what happens when a MiniSquirrel moves:
      * Rule...
+     *
      * @param masterSquirrel The minisquirrel which wants to move
-     * @param moveDirection The direction in which the minisquirrel wants to move
+     * @param moveDirection  The direction in which the minisquirrel wants to move
      */
     @Override
     public void tryMove(MasterSquirrel masterSquirrel, XY moveDirection) {
@@ -192,6 +198,7 @@ public class FlattenedBoard implements EntityContext, BoardView {
 
     /**
      * Finds the nearest instance of a PlayerEntity
+     *
      * @param pos The position from where the nearest PlayerEntity should be found
      * @return THe PlayerEntity nearest to the given position
      */
@@ -229,6 +236,7 @@ public class FlattenedBoard implements EntityContext, BoardView {
 
     /**
      * Kills an entity by deleting it from the board
+     *
      * @param entity The entity to delete
      */
     @Override

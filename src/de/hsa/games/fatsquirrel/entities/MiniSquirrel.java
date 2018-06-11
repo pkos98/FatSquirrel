@@ -21,7 +21,11 @@ public class MiniSquirrel extends PlayerEntity {
 
     @Override
     public XY nextStep(EntityContext entityContext) {
+        XY oldPos = getPosition();
         entityContext.tryMove(this, XYSupport.getRandomMoveVector());
+        // Loses 1 energy point each step
+        if (oldPos != getPosition())
+            updateEnergy(-1);
         return getPosition();
     }
 
