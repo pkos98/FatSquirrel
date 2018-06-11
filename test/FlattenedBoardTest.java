@@ -8,9 +8,11 @@ import de.hsa.games.fatsquirrel.util.PropertyBoardConfigProvider;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.util.LinkedList;
+import java.util.List;
+
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;
-import static org.junit.Assert.assertTrue;
 
 
 public class FlattenedBoardTest {
@@ -25,29 +27,28 @@ public class FlattenedBoardTest {
     }
 
     @Test
-    public void testCollisionOfMasterSquirrelWithBadPlant() {
+    public void testCollisionsOfMasterSquirrel() {
         int startEnergy = 100;
-        MasterSquirrel ms = new HandOperatedMasterSquirrel(Entity.ID_AUTO_GENERATE, startEnergy, new XY(0, 0));
-        BadPlant badPlant = new BadPlant(Entity.ID_AUTO_GENERATE, new XY(1, 0));
+        MasterSquirrel ms = new HandOperatedMasterSquirrel(Entity.ID_AUTO_GENERATE, startEnergy, new XY(1, 1));
         board.insertEntity(ms);
-        board.insertEntity(badPlant);
-        flattenedBoard.tryMove(ms, XY.RIGHT);
-        // Assert the instance respawned somewhere else
-        assertNotEquals(badPlant.getPosition(), new XY(1, 0));
-        assertEquals(ms.getEnergy(), startEnergy + badPlant.getEnergy());
-    }
-
-    @Test
-    public void testCollisionOfMasterSquirrelWithGoodPlant() {
-        int startEnergy = 100;
-        MasterSquirrel ms = new HandOperatedMasterSquirrel(Entity.ID_AUTO_GENERATE, startEnergy, new XY(0, 0));
-        GoodPlant goodPlant = new GoodPlant(Entity.ID_AUTO_GENERATE, new XY(1, 0));
-        board.insertEntity(ms);
-        board.insertEntity(goodPlant);
-        flattenedBoard.tryMove(ms, XY.RIGHT);
-        // Assert the instance respawned somewhere else
-        assertNotEquals(goodPlant.getPosition(), new XY(1, 0));
-        assertEquals(ms.getEnergy(), startEnergy + goodPlant.getEnergy());
+        List<Entity> collidingEntities = new LinkedList<>();
+        collidingEntities.add(new BadPlant(Entity.ID_AUTO_GENERATE, new XY(2, 1)));
+        collidingEntities.add(new GoodPlant(Entity.ID_AUTO_GENERATE, new XY(3, 1)));
+        collidingEntities.add(new GoodBeast(Entity.ID_AUTO_GENERATE, new XY(4, 1)));
+        collidingEntities.add(new BadBeast(Entity.ID_AUTO_GENERATE, new XY(5, 1)));
+        Entity iterEntity = null;
+        int expectedEnergy = startEnergy;
+        for (int i = 0; i < collidingEntities.size(); i++) {
+            if (i > 0)
+                board.deleteEntity(iterEntity);
+            iterEntity = collidingEntities.get(i);
+            board.insertEntity(iterEntity);
+            flattenedBoard.tryMove(ms, XY.RIGHT);
+            XY expectedPos = new XY(i + 2, 1);
+            expectedEnergy += iterEntity.getEnergy();
+            assertEquals(ms.getPosition(), expectedPos);
+            assertEquals(ms.getEnergy(), expectedEnergy);
+        }
     }
 
 }
