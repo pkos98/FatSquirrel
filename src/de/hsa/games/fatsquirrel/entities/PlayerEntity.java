@@ -26,7 +26,7 @@ public abstract class PlayerEntity extends Character {
         return paralyzeCounter;
     }
 
-    protected boolean isParalyzed(boolean incrementCounter) {
+    public boolean isParalyzed(boolean incrementCounter) {
         if (isParalyzed == false)
             return false;
         if (incrementCounter)
