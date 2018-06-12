@@ -12,6 +12,7 @@ import static org.junit.Assert.assertEquals;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.any;
+import static org.mockito.Mockito.when;
 
 public class BadBeastTest {
     private static int xyCounter;
@@ -30,6 +31,7 @@ public class BadBeastTest {
                 return null;
             }
         }).when(context).tryMove(eq(badBeast), any(XY.class));
+        when(context.getSize()).thenReturn(new XY(40, 40));
     }
 
     @Test

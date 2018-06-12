@@ -19,11 +19,9 @@ public class GoodBeast extends Character {
     }
 
     public XY nextStep(EntityContext context) {
-        if (nextStepCounter % 4 != 0) {
-            nextStepCounter++;
+        if (++nextStepCounter % 4 != 0) {
             return getPosition();
         } else {
-            nextStepCounter++;
             context.tryMove(this, botApi(this, context));
             return botApi(this, context);
         }
@@ -33,31 +31,30 @@ public class GoodBeast extends Character {
         XY botapi;
         for (int IterX = goodBeast.getPosition().getX() - 6; IterX < goodBeast.getPosition().getX() + 6; IterX++) {
             for (int IterY = goodBeast.getPosition().getY() - 6; IterY < goodBeast.getPosition().getY() + 6; IterY++) {
-                if (IterX >= 0 && IterY >= 0 && IterX < 40 && IterY < 40) { //kann ich hier irgendwie die Größe des Spielfeldes abfragen?
+                if (IterX >= 0 && IterY >= 0 && IterX < context.getSize().getX() && IterY < context.getSize().getY()) { //kann ich hier irgendwie die Größe des Spielfeldes abfragen?
                     XY iter = new XY(IterX, IterY);
                     Entity entity = context.getEntity(iter);
                     if (entity instanceof MasterSquirrel || entity instanceof MiniSquirrel) {
                         int x, y;
                         if (goodBeast.getPosition().getX() - entity.getPosition().getX() > 0)
-                            x = -1;
+                            x = 1;
                         else if (goodBeast.getPosition().getX() - entity.getPosition().getX() == 0)
                             x = 0;
                         else
-                            x = 1;
+                            x = -1;
 
                         if (goodBeast.getPosition().getY() - entity.getPosition().getY() > 0)
-                            y = -1;
+                            y = 1;
                         else if (goodBeast.getPosition().getY() - entity.getPosition().getY() == 0)
                             y = 0;
                         else
-                            y = 1;
+                            y = -1;
                         botapi = new XY(x, y);
                         return botapi;
                     } else continue;
                 } else continue;
             }
         }
-        context.tryMove(this, XYSupport.getRandomMoveVector());
         return XYSupport.getRandomMoveVector();
     }
 }

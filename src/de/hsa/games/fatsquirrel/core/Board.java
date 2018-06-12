@@ -1,5 +1,8 @@
 package de.hsa.games.fatsquirrel.core;
 
+import de.hsa.games.fatsquirrel.botapi.BotController;
+import de.hsa.games.fatsquirrel.botapi.BotControllerFactory;
+import de.hsa.games.fatsquirrel.botapi.ControllerContext;
 import de.hsa.games.fatsquirrel.entities.*;
 import de.hsa.games.fatsquirrel.util.EntityAnnotation;
 import de.hsa.games.fatsquirrel.util.XYSupport;
@@ -70,6 +73,9 @@ public class Board {
      */
     public void insertEntity(Entity entity) {
         entities.add(entity);
+        if (EntityType.fromEntity(entity) == EntityType.MASTER_SQUIRREL_BOT ||
+                EntityType.fromEntity(entity) == EntityType.HAND_OPERATED_MASTER_SQUIRREL)
+            masterSquirrels.add(entity);
     }
 
     /**
@@ -121,6 +127,19 @@ public class Board {
         return entities;
     }
 
+    private void loadBots() {
+        String mainBotPath = boardConfig.getMainBotPath();
+        try {
+            // MasterSquirel
+            BotControllerFactory factory = (BotControllerFactory) Class.forName(mainBotPath).newInstance();
+            XY pos = XYSupport.getRandomEmptyPosition(getWidth(), getHeight(), flatten());
+            MasterSquirrelBot bot = new MasterSquirrelBot(Entity.ID_AUTO_GENERATE, 1000, pos, factory);
+            insertEntity(bot);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
     /**
      * Initialize the board with the amount of entities defined in BoardConfig
      */
@@ -144,7 +163,9 @@ public class Board {
             insertEntity(new Wall(Entity.ID_AUTO_GENERATE, new XY(getWidth() - 1, y)));
         }
         pos = XYSupport.getRandomEmptyPosition(getWidth(), getHeight(), flatten());
-        insertEntity(new HandOperatedMasterSquirrel(Entity.ID_AUTO_GENERATE, 100, pos));
+        HandOperatedMasterSquirrel ms = new HandOperatedMasterSquirrel(Entity.ID_AUTO_GENERATE, 150, pos);
+        insertEntity(ms);
+        loadBots();
     }
 
     private Entity instantiateEntity(int i) {
@@ -163,13 +184,6 @@ public class Board {
     }
 
     public ArrayList<Entity> getMasters() {
-        for (int iterX = 0; iterX < width; iterX++) {
-            for (int itery = 0; itery < height; itery++) {
-                Entity entity = flattenedBoard.getEntity(iterX, itery);
-                if (entity instanceof MasterSquirrel)
-                    masterSquirrels.add(entity);
-            }
-        }
         return masterSquirrels;
     }
 }

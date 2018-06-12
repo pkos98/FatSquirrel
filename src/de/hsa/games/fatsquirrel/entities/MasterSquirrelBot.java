@@ -1,12 +1,13 @@
 package de.hsa.games.fatsquirrel.entities;
 
 import de.hsa.games.fatsquirrel.botapi.BotController;
+import de.hsa.games.fatsquirrel.botapi.BotControllerFactory;
 import de.hsa.games.fatsquirrel.botapi.ControllerContext;
 import de.hsa.games.fatsquirrel.botapi.OutOfViewException;
-import de.hsa.games.fatsquirrel.botimpl.BotControllerFactoryImpl;
 import de.hsa.games.fatsquirrel.core.EntityContext;
 import de.hsa.games.fatsquirrel.core.EntityType;
 import de.hsa.games.fatsquirrel.core.XY;
+import de.hsa.games.fatsquirrel.util.MiniSquirrelInjector;
 import de.hsa.games.fatsquirrel.util.XYSupport;
 
 import java.lang.reflect.InvocationHandler;
@@ -20,15 +21,20 @@ public class MasterSquirrelBot extends MasterSquirrel {
 
     private static final int VIEW_DISTANCE = 31;
     private final BotController botController;
+    private final BotControllerFactory factory;
     private Logger logger = Logger.getLogger(getClass().getName());
+    private MiniSquirrelInjector miniSquirrelInjector;
 
-    public MasterSquirrelBot(int id, int startEnergy, XY startPos) {
+    public MasterSquirrelBot(int id, int startEnergy, XY startPos, BotControllerFactory factory) {
         super(id, startEnergy, startPos);
-        botController = new BotControllerFactoryImpl().createMasterBotController();
+        this.factory = factory;
+        botController = factory.createMasterBotController();
+        name = botController.getClass().getName();
     }
 
     @Override
     public XY nextStep(EntityContext entityContext) {
+        miniSquirrelInjector = (MiniSquirrelInjector) entityContext;
         if (isParalyzed(true))
             return getPosition();
         ControllerContext view = new ControllerContextImpl(entityContext);
@@ -47,6 +53,8 @@ public class MasterSquirrelBot extends MasterSquirrel {
                 handler);
 
         botController.nextStep(proxyInstance);
+        if (getEnergy() >= 1000)
+            proxyInstance.spawnMiniBot(XY.RIGHT, 1000);
         return getPosition();
     }
 
@@ -121,11 +129,13 @@ public class MasterSquirrelBot extends MasterSquirrel {
 
         @Override
         public void spawnMiniBot(XY direction, int energy) {
-            if (energy <= getEnergy()) {
-                //MINI_SQUIRREL_BOT miniSquirrelBot = new MINI_SQUIRREL_BOT(energy, XYSupport.add(getPosition(),direction), this, botController);
-                //context.insertEntity(miniSquirrelBot);
-                updateEnergy(-energy);
-            }
+            if (energy > getEnergy())
+                return;
+            MiniSquirrelBot miniBot = new MiniSquirrelBot(energy, XYSupport.add(getPosition(), direction),
+                    MasterSquirrelBot.this, factory);
+            updateEnergy(-energy);
+            addMiniSquirrel(miniBot);
+            MasterSquirrelBot.this.miniSquirrelInjector.injectMiniSquirrel(miniBot);
         }
 
         @Override

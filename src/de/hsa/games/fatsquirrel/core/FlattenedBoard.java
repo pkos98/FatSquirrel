@@ -1,6 +1,7 @@
 package de.hsa.games.fatsquirrel.core;
 
 import de.hsa.games.fatsquirrel.entities.*;
+import de.hsa.games.fatsquirrel.util.MiniSquirrelInjector;
 import de.hsa.games.fatsquirrel.util.XYSupport;
 import javafx.collections.ListChangeListener;
 
@@ -9,7 +10,7 @@ import java.util.logging.Logger;
 /**
  * Manages collisions of all entities and provides 2d-access to the board
  */
-public class FlattenedBoard implements EntityContext, BoardView {
+public class FlattenedBoard implements EntityContext, BoardView, MiniSquirrelInjector {
 
     private final Logger logger = Logger.getLogger(this.getClass().getName());
     private Board board;
@@ -133,6 +134,8 @@ public class FlattenedBoard implements EntityContext, BoardView {
                 nextEntity.updateEnergy(goodBeast.getEnergy());
                 killAndReplace(goodBeast);
                 break;
+            case WALL:
+                return;
             case EMPTY_FIELD:
                 move(goodBeast, nextPosition);
         }
@@ -163,8 +166,11 @@ public class FlattenedBoard implements EntityContext, BoardView {
                 if (badBeast.getBiteCounter() == BadBeast.MAX_BITES)
                     killAndReplace(badBeast);
                 break;
+            case WALL:
+                return;
             case EMPTY_FIELD:
                 move(badBeast, nextPosition);
+                break;
         }
     }
 
@@ -257,6 +263,11 @@ public class FlattenedBoard implements EntityContext, BoardView {
         entity.updateEnergy(entity.getStartEnergy() - entity.getEnergy());
         XY randomPos = XYSupport.getRandomEmptyPosition(board.getSize().getX(), board.getSize().getY(), this);
         move(entity, randomPos);
+    }
+
+    @Override
+    public void injectMiniSquirrel(MiniSquirrel miniSquirrel) {
+        board.insertEntity(miniSquirrel);
     }
 
     /**
@@ -384,16 +395,10 @@ public class FlattenedBoard implements EntityContext, BoardView {
     }
 
     private void setCell(Entity entity, XY pos) {
+        Entity entityToSet = cells[pos.getX()][pos.getY()];
+        if (entityToSet instanceof Wall)
+            return;
         cells[pos.getX()][pos.getY()] = entity;
     }
-
-    private void updateCells() {
-        cells = new Entity[board.getWidth()][board.getHeight()];
-        for (int i = 0; i < board.getEntities().size(); i++) {
-            Entity iterEntity = board.getEntities().get(i);
-            cells[iterEntity.getPosition().getX()][iterEntity.getPosition().getY()] = iterEntity;
-        }
-    }
-
 
 }

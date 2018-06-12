@@ -101,6 +101,7 @@ public class FxUI extends Scene implements de.hsa.games.fatsquirrel.UI {
             case MINI_SQUIRREL_BOT:
                 gc.setFill(Color.BLUE);
                 gc.fillOval(xPos, yPos, CELL_SIZE, CELL_SIZE);
+                break;
             case EMPTY_FIELD:
                 gc.setFill(Color.WHITE);
                 gc.fillRect(xPos, yPos, CELL_SIZE, CELL_SIZE);

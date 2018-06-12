@@ -8,7 +8,7 @@ import java.util.logging.Logger;
 
 public abstract class MasterSquirrel extends PlayerEntity {
 
-    private String name = "tester";
+    protected String name = getClass().getName();
     private static int START_ENERGY = 0;
     private List<MiniSquirrel> miniSquirrels = new LinkedList<>();
     private Logger logger = Logger.getLogger(this.getClass().getName());
@@ -25,11 +25,6 @@ public abstract class MasterSquirrel extends PlayerEntity {
     @Override
     public int getStartEnergy() {
         return START_ENERGY;
-    }
-
-    @Override
-    public String toString() {
-        return "HAND_OPERATED_MASTER_SQUIRREL";
     }
 
     public boolean isPatronOf(MiniSquirrel miniSquirrel) {

@@ -34,16 +34,16 @@ public class BadBeast extends Character {
         if (++nextStepCounter % 4 != 0) {
             return getPosition();
         } else {
-            context.tryMove(this, XYSupport.getRandomMoveVector());
-            return getPosition();//botApi(this, context);
+            context.tryMove(this, botApi(this, context));
+            return getPosition();
         }
     }
 
     public XY botApi(BadBeast badBeast, EntityContext context) {
-      /*  XY botapi;
+        XY botapi;
         for (int IterX = badBeast.getPosition().getX() - viewDistance; IterX < badBeast.getPosition().getX() + viewDistance; IterX++) {
             for (int IterY = badBeast.getPosition().getY() - viewDistance; IterY < badBeast.getPosition().getY() + viewDistance; IterY++) {
-                if (IterX >= 0 && IterY >= 0 && IterX < 40 && IterY < 40) {
+                if (IterX >= 0 && IterY >= 0 && IterX < context.getSize().getX() & IterY < context.getSize().getY()) {
                     XY iter = new XY(IterX, IterY);
                     Entity entity = context.getEntity(iter);
                     if (entity instanceof MasterSquirrel || entity instanceof MiniSquirrel) {
@@ -64,11 +64,11 @@ public class BadBeast extends Character {
                         botapi = new XY(x, y);
                         return botapi;
                     } else continue;
-                } else continue;
+                }
             }
         }
-        context.tryMove(this, XYSupport.getRandomMoveVector());
-        return XYSupport.getRandomMoveVector();*/
-        return null;
+        //context.tryMove(this, XYSupport.getRandomMoveVector());
+        //return XYSupport.getRandomMoveVector();*/
+        return XYSupport.getRandomMoveVector();
     }
 }

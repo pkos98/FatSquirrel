@@ -73,6 +73,8 @@ public class State {
                     break;
                 case BAD_BEAST:
                 case GOOD_BEAST:
+                case MINI_SQUIRREL:
+                case MINI_SQUIRREL_BOT:
                 case MASTER_SQUIRREL_BOT:
                     ((Character) iterEntity).nextStep(flattenedBoard());
                     break;

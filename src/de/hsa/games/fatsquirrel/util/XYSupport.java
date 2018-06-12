@@ -105,4 +105,21 @@ public class XYSupport {
         return new XY(x, y);
     }
 
+    public static XY getDirection(XY from, XY to) {
+        int x = 0;
+        int y = 0;
+
+        if (from.getX() < to.getX())
+            x = 1;
+        else if (from.getX() > to.getX())
+            x = -1;
+
+        if (from.getY() < to.getY())
+            y = 1;
+        else if (from.getY() > to.getY())
+            y = -1;
+
+        return new XY(x, y);
+
+    }
 }
